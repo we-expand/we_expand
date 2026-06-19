@@ -115,4 +115,92 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <Diamond className="w-8 h-8 mx-auto mb-10 text-[#7000FF] opacity-50" />
           <h2 className="font-space text-3xl md:text-5xl font-light leading-tight">
-            "A inteligência artificial não é apenas uma
+            "A inteligência artificial não é apenas uma ferramenta operacional. <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#7000FF] font-bold">É o novo alicerce do capital.</span>"
+          </h2>
+        </div>
+      </section>
+
+      {/* EXPERTISE ORIGINAL APROVADO */}
+      <section id="expertise" className="relative z-10 py-32 px-8">
+        <div className="max-w-[1440px] mx-auto">
+          <div className="grid md:grid-cols-3 gap-6">
+            <ExpertiseCard 
+              icon={<Network className="w-10 h-10 text-[#00F0FF]" />}
+              title="Strategic Discovery"
+              desc="Auditoria cirúrgica. Encontramos o ralo financeiro invisível da sua operação e desenhamos a arquitetura neural para estancá-lo."
+              delay={0}
+            />
+            <ExpertiseCard 
+              icon={<Workflow className="w-10 h-10 text-[#7000FF]" />}
+              title="Custom Engines"
+              desc="Desenvolvimento in-house de sistemas de inteligência sob demanda. Orientação preditiva perfeitamente integrada ao seu ERP."
+              delay={0.2}
+            />
+            <ExpertiseCard 
+              icon={<Cpu className="w-10 h-10 text-white" />}
+              title="Talent Outsourcing"
+              desc="Esquadrões de alta performance alocados in-loco. Cientistas de dados e engenheiros focados exclusivamente no seu domínio."
+              delay={0.4}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER ORIGINAL APROVADO */}
+      <footer id="contact" className="relative z-10 bg-black pt-32 pb-12 px-8 border-t border-white/10">
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-16 mb-24">
+          <div className="max-w-xl">
+            <h2 className="font-space text-5xl font-bold tracking-tighter mb-8">Ready to Expand?</h2>
+            <p className="text-white/40 mb-10">Agende uma sessão estratégica com nossos arquitetos de decisão. Vagas limitadas para projetos de alta complexidade.</p>
+            <a href="mailto:hello@we-expand.com" className="inline-flex items-center gap-4 text-xl font-bold border-b border-[#00F0FF] pb-2 hover:text-[#00F0FF] transition-colors">
+              hello@we-expand.com <ArrowUpRight className="w-5 h-5" />
+            </a>
+          </div>
+          <div className="flex gap-16 text-sm font-space uppercase tracking-[0.1em] text-white/30">
+            <div className="flex flex-col gap-4">
+              <span className="text-white font-bold mb-2">Social</span>
+              <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
+              <a href="#" className="hover:text-white transition-colors">Twitter // X</a>
+            </div>
+            <div className="flex flex-col gap-4">
+              <span className="text-white font-bold mb-2">Office</span>
+              <span>São Paulo, SP</span>
+              <span>Brasil</span>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-[1440px] mx-auto flex justify-between items-center text-xs text-white/20 font-space tracking-widest pt-8 border-t border-white/5">
+          <span>© {new Date().getFullYear()} WE EXPAND. ALL RIGHTS RESERVED.</span>
+          <span>ELEVATING CORPORATE INTELLIGENCE.</span>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+function ExpertiseCard({ icon, title, desc, delay }: { icon: any, title: string, desc: string, delay: number }) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 overflow-hidden backdrop-blur-sm rounded-2xl"
+    >
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#00F0FF]/10 to-transparent rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      
+      <div className="relative z-10">
+        <div className="mb-12 bg-black/50 w-20 h-20 flex items-center justify-center rounded-2xl border border-white/10 group-hover:scale-110 transition-transform duration-500">
+          {icon}
+        </div>
+        <h3 className="font-space text-2xl font-bold mb-4">{title}</h3>
+        <p className="text-white/50 leading-relaxed mb-12 min-h-[80px]">{desc}</p>
+        
+        <div className="flex items-center gap-3 text-xs font-space font-bold uppercase tracking-widest text-white/30 group-hover:text-white transition-colors">
+          <span className="w-8 h-[1px] bg-white/20 group-hover:bg-[#00F0FF] group-hover:w-12 transition-all duration-500" />
+          Discover
+        </div>
+      </div>
+    </motion.div>
+  );
+}
