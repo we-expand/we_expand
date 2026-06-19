@@ -4,13 +4,10 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Cpu, Network, Workflow, ArrowUpRight, Diamond } from 'lucide-react';
 import { useRef } from 'react';
 
-// O LOGOTIPO PREMIUM: Minimalista, expansivo, combinando o W e o E em um nó de rede.
 const WeExpandLogo = () => (
   <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-105 transition-transform duration-700 ease-out">
     <rect width="120" height="120" rx="24" fill="url(#bg-grad)" fillOpacity="0.05" className="group-hover:fillOpacity-10 transition-all duration-700"/>
-    {/* W Shape */}
     <path d="M30 45L45 80L60 55L75 80L90 45" stroke="url(#line-grad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
-    {/* E Expansion Nodes */}
     <circle cx="90" cy="45" r="4" fill="#00F0FF" className="animate-pulse" />
     <circle cx="60" cy="55" r="4" fill="#7000FF" />
     <circle cx="30" cy="45" r="4" fill="#00F0FF" />
@@ -36,19 +33,18 @@ export default function Home() {
   return (
     <main ref={containerRef} className="relative min-h-screen overflow-hidden bg-[#050505]">
       
-      {/* VÍDEO DE BACKGROUND (O "Sussurro" Tecnológico) */}
+      {/* BACKGROUND VÍDEO */}
       <div className="fixed inset-0 w-full h-full z-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-[#050505]/60 to-[#050505] z-10" />
-        {/* Substitua por um vídeo abstrato seu se preferir. Este é um placeholder premium de network */}
         <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-30 mix-blend-screen">
           <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connections-background-34633-large.mp4" type="video/mp4" />
         </video>
       </div>
 
-      {/* HEADER GLASSMORPHISM */}
+      {/* HEADER ATUALIZADO COM LINKS FUNCIONAIS */}
       <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/40 backdrop-blur-2xl transition-all duration-500">
         <div className="max-w-[1440px] mx-auto px-8 h-24 flex items-center justify-between">
-          <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <WeExpandLogo />
             <span className="font-space font-bold text-2xl tracking-tighter text-white">We<span className="text-white/40">Expand</span></span>
           </div>
@@ -56,15 +52,15 @@ export default function Home() {
             <a href="#vision" className="hover:text-[#00F0FF] transition-colors">The Vision</a>
             <a href="#expertise" className="hover:text-[#00F0FF] transition-colors">Expertise</a>
           </nav>
-          <button className="relative px-8 py-3 bg-white text-black font-space font-bold uppercase text-xs tracking-widest rounded-full overflow-hidden group">
+          <a href="#contact" className="relative px-8 py-3 bg-white text-black font-space font-bold uppercase text-xs tracking-widest rounded-full overflow-hidden group inline-block text-center cursor-pointer">
             <span className="relative z-10 group-hover:text-white transition-colors duration-500">Contact Us</span>
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#00F0FF] to-[#7000FF] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
-          </button>
+          </a>
         </div>
       </header>
 
-      {/* HERO SECTION - TIPOGRAFIA BRUTALISTA E PARALAXE */}
-      <section className="relative z-10 h-screen flex items-center px-8">
+      {/* HERO SECTION COM ID="vision" */}
+      <section id="vision" className="relative z-10 h-screen flex items-center px-8">
         <motion.div style={{ y: yParallax, opacity: opacityFade }} className="max-w-[1440px] mx-auto w-full mt-20">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
             <div className="flex items-center gap-3 mb-8">
@@ -89,7 +85,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* CITAÇÃO DE VANGUARDA / SEPARADOR */}
+      {/* SEPARADOR */}
       <section className="relative z-10 py-32 px-8 bg-[#050505]/90 border-t border-white/5 backdrop-blur-xl">
         <div className="max-w-4xl mx-auto text-center">
           <Diamond className="w-8 h-8 mx-auto mb-10 text-[#7000FF] opacity-50" />
@@ -99,38 +95,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* EXPERTISE - GRID ASSIMÉTRICO E GLASSMORPHISM */}
+      {/* EXPERTISE COM ID="expertise" */}
       <section id="expertise" className="relative z-10 py-32 px-8">
         <div className="max-w-[1440px] mx-auto">
           <div className="grid md:grid-cols-3 gap-6">
-            
             <ExpertiseCard 
               icon={<Network className="w-10 h-10 text-[#00F0FF]" />}
               title="Strategic Discovery"
               desc="Auditoria cirúrgica. Encontramos o ralo financeiro invisível da sua operação e desenhamos a arquitetura neural para estancá-lo."
               delay={0}
             />
-            
             <ExpertiseCard 
               icon={<Workflow className="w-10 h-10 text-[#7000FF]" />}
               title="Custom Engines"
               desc="Desenvolvimento in-house de sistemas de inteligência sob demanda. Orientação preditiva perfeitamente integrada ao seu ERP."
               delay={0.2}
             />
-            
             <ExpertiseCard 
               icon={<Cpu className="w-10 h-10 text-white" />}
               title="Talent Outsourcing"
               desc="Esquadrões de alta performance alocados in-loco. Cientistas de dados e engenheiros focados exclusivamente no seu domínio."
               delay={0.4}
             />
-
           </div>
         </div>
       </section>
 
-      {/* FOOTER ULTRAMODERNO */}
-      <footer className="relative z-10 bg-black pt-32 pb-12 px-8 border-t border-white/10">
+      {/* FOOTER COM ID="contact" */}
+      <footer id="contact" className="relative z-10 bg-black pt-32 pb-12 px-8 border-t border-white/10">
         <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-16 mb-24">
           <div className="max-w-xl">
             <h2 className="font-space text-5xl font-bold tracking-tighter mb-8">Ready to Expand?</h2>
