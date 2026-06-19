@@ -1,128 +1,189 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Bot, Code2, Cpu, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Cpu, Network, Workflow, ArrowUpRight, Diamond } from 'lucide-react';
+import { useRef } from 'react';
+
+// O LOGOTIPO PREMIUM: Minimalista, expansivo, combinando o W e o E em um nó de rede.
+const WeExpandLogo = () => (
+  <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-105 transition-transform duration-700 ease-out">
+    <rect width="120" height="120" rx="24" fill="url(#bg-grad)" fillOpacity="0.05" className="group-hover:fillOpacity-10 transition-all duration-700"/>
+    {/* W Shape */}
+    <path d="M30 45L45 80L60 55L75 80L90 45" stroke="url(#line-grad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
+    {/* E Expansion Nodes */}
+    <circle cx="90" cy="45" r="4" fill="#00F0FF" className="animate-pulse" />
+    <circle cx="60" cy="55" r="4" fill="#7000FF" />
+    <circle cx="30" cy="45" r="4" fill="#00F0FF" />
+    <defs>
+      <linearGradient id="bg-grad" x1="0" y1="0" x2="120" y2="120">
+        <stop stopColor="#00F0FF" />
+        <stop offset="1" stopColor="#7000FF" />
+      </linearGradient>
+      <linearGradient id="line-grad" x1="30" y1="62.5" x2="90" y2="62.5">
+        <stop stopColor="#ffffff" />
+        <stop offset="1" stopColor="#ffffff" stopOpacity="0.2" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
 
 export default function Home() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
+  const yParallax = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  const opacityFade = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-50 selection:bg-blue-500/30">
-      {/* HEADER */}
-      <header className="fixed top-0 w-full border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-md z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="text-2xl font-bold tracking-tighter">
-            We<span className="text-blue-500">Expand</span>
+    <main ref={containerRef} className="relative min-h-screen overflow-hidden bg-[#050505]">
+      
+      {/* VÍDEO DE BACKGROUND (O "Sussurro" Tecnológico) */}
+      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-[#050505]/60 to-[#050505] z-10" />
+        {/* Substitua por um vídeo abstrato seu se preferir. Este é um placeholder premium de network */}
+        <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-30 mix-blend-screen">
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connections-background-34633-large.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      {/* HEADER GLASSMORPHISM */}
+      <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/40 backdrop-blur-2xl transition-all duration-500">
+        <div className="max-w-[1440px] mx-auto px-8 h-24 flex items-center justify-between">
+          <div className="flex items-center gap-4 group cursor-pointer">
+            <WeExpandLogo />
+            <span className="font-space font-bold text-2xl tracking-tighter text-white">We<span className="text-white/40">Expand</span></span>
           </div>
-          <a href="#contato" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-sm font-medium rounded-lg transition-colors">
-            Falar com Especialista
-          </a>
+          <nav className="hidden md:flex gap-12 font-space text-xs font-semibold tracking-[0.2em] uppercase text-white/50">
+            <a href="#vision" className="hover:text-[#00F0FF] transition-colors">The Vision</a>
+            <a href="#expertise" className="hover:text-[#00F0FF] transition-colors">Expertise</a>
+          </nav>
+          <button className="relative px-8 py-3 bg-white text-black font-space font-bold uppercase text-xs tracking-widest rounded-full overflow-hidden group">
+            <span className="relative z-10 group-hover:text-white transition-colors duration-500">Contact Us</span>
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#00F0FF] to-[#7000FF] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
+          </button>
         </div>
       </header>
 
-      {/* HERO SECTION */}
-      <section className="pt-40 pb-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl"
-          >
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-              Inteligência Artificial como o <br className="hidden md:block"/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-                motor da sua operação.
-              </span>
+      {/* HERO SECTION - TIPOGRAFIA BRUTALISTA E PARALAXE */}
+      <section className="relative z-10 h-screen flex items-center px-8">
+        <motion.div style={{ y: yParallax, opacity: opacityFade }} className="max-w-[1440px] mx-auto w-full mt-20">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
+            <div className="flex items-center gap-3 mb-8">
+              <span className="w-12 h-[1px] bg-[#00F0FF]" />
+              <span className="font-space text-[#00F0FF] uppercase tracking-[0.3em] text-xs font-bold">Consultoria de Elite em IA</span>
+            </div>
+            
+            <h1 className="font-space text-[5rem] md:text-[8rem] leading-[0.85] font-bold tracking-tighter mb-10">
+              ENGINEERED <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/20">
+                FOR THE
+              </span> <br />
+              UNPREDICTABLE.
             </h1>
-            <p className="text-lg md:text-xl text-neutral-400 mb-10 leading-relaxed max-w-2xl">
-              Auditoria de processos, desenvolvimento de sistemas sob demanda e alocação de Squads de alta performance em IA. Escale sua empresa sem inflar seu RH.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#servicos" className="px-6 py-3 bg-white text-black text-center font-medium rounded-lg hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2">
-                Conhecer Soluções <ArrowRight className="w-4 h-4" />
-              </a>
+            
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 max-w-4xl">
+              <p className="text-xl md:text-2xl font-light text-white/60 leading-relaxed max-w-xl">
+                Nós não prevemos o futuro da sua operação. <strong className="text-white font-medium">Nós o computamos.</strong> Desenhamos ecossistemas preditivos para operações de missão crítica.
+              </p>
             </div>
           </motion.div>
+        </motion.div>
+      </section>
+
+      {/* CITAÇÃO DE VANGUARDA / SEPARADOR */}
+      <section className="relative z-10 py-32 px-8 bg-[#050505]/90 border-t border-white/5 backdrop-blur-xl">
+        <div className="max-w-4xl mx-auto text-center">
+          <Diamond className="w-8 h-8 mx-auto mb-10 text-[#7000FF] opacity-50" />
+          <h2 className="font-space text-3xl md:text-5xl font-light leading-tight">
+            "A inteligência artificial não é apenas uma ferramenta operacional. <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#7000FF] font-bold">É o novo alicerce do capital.</span>"
+          </h2>
         </div>
       </section>
 
-      {/* SERVICES SECTION */}
-      <section id="servicos" className="py-24 bg-neutral-900 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Como nós expandimos o seu negócio</h2>
-            <p className="text-neutral-400 text-lg">Soluções de ponta a ponta para desafios complexos.</p>
-          </div>
+      {/* EXPERTISE - GRID ASSIMÉTRICO E GLASSMORPHISM */}
+      <section id="expertise" className="relative z-10 py-32 px-8">
+        <div className="max-w-[1440px] mx-auto">
+          <div className="grid md:grid-cols-3 gap-6">
+            
+            <ExpertiseCard 
+              icon={<Network className="w-10 h-10 text-[#00F0FF]" />}
+              title="Strategic Discovery"
+              desc="Auditoria cirúrgica. Encontramos o ralo financeiro invisível da sua operação e desenhamos a arquitetura neural para estancá-lo."
+              delay={0}
+            />
+            
+            <ExpertiseCard 
+              icon={<Workflow className="w-10 h-10 text-[#7000FF]" />}
+              title="Custom Engines"
+              desc="Desenvolvimento in-house de sistemas de inteligência sob demanda. Orientação preditiva perfeitamente integrada ao seu ERP."
+              delay={0.2}
+            />
+            
+            <ExpertiseCard 
+              icon={<Cpu className="w-10 h-10 text-white" />}
+              title="Talent Outsourcing"
+              desc="Esquadrões de alta performance alocados in-loco. Cientistas de dados e engenheiros focados exclusivamente no seu domínio."
+              delay={0.4}
+            />
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Service 1 */}
-            <div className="p-8 border border-neutral-800 rounded-2xl bg-neutral-950 hover:border-blue-500/50 transition-colors">
-              <Bot className="w-10 h-10 text-blue-500 mb-6" />
-              <h3 className="text-xl font-semibold mb-3">AI Product Discovery</h3>
-              <p className="text-neutral-400 leading-relaxed">
-                Mapeamento estratégico de gargalos operacionais e desenho da arquitetura de IA ideal para reduzir custos.
-              </p>
-            </div>
-
-            {/* Service 2 */}
-            <div className="p-8 border border-neutral-800 rounded-2xl bg-neutral-950 hover:border-blue-500/50 transition-colors">
-              <Code2 className="w-10 h-10 text-blue-500 mb-6" />
-              <h3 className="text-xl font-semibold mb-3">Sistemas Sob Demanda</h3>
-              <p className="text-neutral-400 leading-relaxed">
-                Desenvolvimento de ponta a ponta de motores autônomos e preditivos integrados ao banco de dados da sua empresa.
-              </p>
-            </div>
-
-            {/* Service 3 */}
-            <div className="p-8 border border-neutral-800 rounded-2xl bg-neutral-950 hover:border-blue-500/50 transition-colors">
-              <Cpu className="w-10 h-10 text-blue-500 mb-6" />
-              <h3 className="text-xl font-semibold mb-3">Outsourcing de Squads</h3>
-              <p className="text-neutral-400 leading-relaxed">
-                Alocação de esquadrões multidisciplinares in loco ou remotos, dedicados a executar o seu roadmap de tecnologia.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* VALUE PROP */}
-      <section className="py-24 px-6 border-t border-neutral-800">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-center">
-          <div className="md:w-1/2">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Execução rápida. <br/>Risco mitigado.</h2>
-            <p className="text-neutral-400 text-lg mb-8 leading-relaxed">
-              Trabalhamos com a metodologia "Sell First, Hire Second". Nossos talentos já estão mapeados e prontos para entrar em operação assim que o seu projeto exigir.
-            </p>
-            <ul className="space-y-4">
-              {['Profissionais de nível Sênior', 'Implementação em Shadow Mode', 'Arquitetura modular de rápida entrega'].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-neutral-300">
-                  <CheckCircle2 className="w-5 h-5 text-blue-500" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="md:w-1/2 w-full aspect-square md:aspect-[4/3] bg-gradient-to-tr from-neutral-900 to-neutral-800 border border-neutral-800 rounded-3xl flex items-center justify-center p-8">
-             {/* Placeholder visual para a arquitetura */}
-             <div className="w-full h-full border border-neutral-700/50 rounded-xl bg-neutral-950/50 flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                <Cpu className="w-16 h-16 text-neutral-600 z-10 mb-4" />
-                <p className="text-neutral-500 font-mono text-sm z-10">WeExpand_Engine_Active</p>
-             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER & CTA */}
-      <footer id="contato" className="bg-neutral-950 py-12 px-6 border-t border-neutral-900">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-xl font-bold tracking-tighter">
-            We<span className="text-blue-500">Expand</span>
+      {/* FOOTER ULTRAMODERNO */}
+      <footer className="relative z-10 bg-black pt-32 pb-12 px-8 border-t border-white/10">
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-16 mb-24">
+          <div className="max-w-xl">
+            <h2 className="font-space text-5xl font-bold tracking-tighter mb-8">Ready to Expand?</h2>
+            <p className="text-white/40 mb-10">Agende uma sessão estratégica com nossos arquitetos de decisão. Vagas limitadas para projetos de alta complexidade.</p>
+            <a href="mailto:hello@we-expand.com" className="inline-flex items-center gap-4 text-xl font-bold border-b border-[#00F0FF] pb-2 hover:text-[#00F0FF] transition-colors">
+              hello@we-expand.com <ArrowUpRight className="w-5 h-5" />
+            </a>
           </div>
-          <p className="text-neutral-500 text-sm">
-            © {new Date().getFullYear()} We Expand Consulting. Transformando operações corporativas com IA.
-          </p>
+          <div className="flex gap-16 text-sm font-space uppercase tracking-[0.1em] text-white/30">
+            <div className="flex flex-col gap-4">
+              <span className="text-white font-bold mb-2">Social</span>
+              <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
+              <a href="#" className="hover:text-white transition-colors">Twitter // X</a>
+            </div>
+            <div className="flex flex-col gap-4">
+              <span className="text-white font-bold mb-2">Office</span>
+              <span>São Paulo, SP</span>
+              <span>Brasil</span>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-[1440px] mx-auto flex justify-between items-center text-xs text-white/20 font-space tracking-widest pt-8 border-t border-white/5">
+          <span>© {new Date().getFullYear()} WE EXPAND. ALL RIGHTS RESERVED.</span>
+          <span>ELEVATING CORPORATE INTELLIGENCE.</span>
         </div>
       </footer>
     </main>
+  );
+}
+
+function ExpertiseCard({ icon, title, desc, delay }: { icon: any, title: string, desc: string, delay: number }) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 overflow-hidden backdrop-blur-sm rounded-2xl"
+    >
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#00F0FF]/10 to-transparent rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      
+      <div className="relative z-10">
+        <div className="mb-12 bg-black/50 w-20 h-20 flex items-center justify-center rounded-2xl border border-white/10 group-hover:scale-110 transition-transform duration-500">
+          {icon}
+        </div>
+        <h3 className="font-space text-2xl font-bold mb-4">{title}</h3>
+        <p className="text-white/50 leading-relaxed mb-12 min-h-[80px]">{desc}</p>
+        
+        <div className="flex items-center gap-3 text-xs font-space font-bold uppercase tracking-widest text-white/30 group-hover:text-white transition-colors">
+          <span className="w-8 h-[1px] bg-white/20 group-hover:bg-[#00F0FF] group-hover:w-12 transition-all duration-500" />
+          Discover
+        </div>
+      </div>
+    </motion.div>
   );
 }
