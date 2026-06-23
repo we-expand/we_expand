@@ -6,7 +6,7 @@ let resend: Resend;
 export async function POST(request: Request) {
   try {
     if (!resend) {
-      resend = new Resend("SUA_CHAVE_AQUI_re_..."); // Lembre-se de colocar sua chave do Resend!
+      resend = new Resend("re_BGtVsfeL_Ba2na9agwdyMUXjJhr8NsstR"); // Lembre-se de colocar sua chave do Resend!
     }
 
     const { name, email, company, message } = await request.json();
