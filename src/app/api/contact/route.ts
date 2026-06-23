@@ -1,16 +1,21 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Inicializa o Resend com a variável de ambiente segura
-const resend = new Resend(re_NHnfHYcv_ADPQcaTLGxwiyU31Xv8fbYVZ);
+// Apenas declaramos a variável, não inicializamos imediatamente.
+let resend: Resend;
 
 export async function POST(request: Request) {
   try {
+    // Inicialização atrasada: o Resend só é chamado quando alguém clica no botão "Enviar"
+    // Isso impede o Next.js de tentar rodar isso durante o processo de build
+    if (!resend) {
+      resend = new Resend("re_NHnfHYcv_ADPQcaTLGxwiyU31Xv8fbYVZ");
+    }
+
     const { name, email, company, message } = await request.json();
 
-    // Dispara o e-mail de forma automática
     const { data, error } = await resend.emails.send({
-      from: 'We Expand Intel <onboarding@resend.dev>', // Quando verificar o domínio, mudamos para contato@we-expand.com
+      from: 'We Expand Intel <onboarding@resend.dev>', 
       to: ['info@we-expand.com'],
       subject: `🔥 Novo Mapeamento Operacional: ${company}`,
       html: `
@@ -32,19 +37,4 @@ export async function POST(request: Request) {
           </div>
           <br />
           <hr style="border: 0; border-top: 1px solid #1a1a1a; margin-top: 24px;" />
-          <p style="font-size: 10px; color: #333; text-align: center; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 16px;">
-            We Expand Consulting // Algorithmic System
-          </p>
-        </div>
-      `,
-    });
-
-    if (error) {
-      return NextResponse.json({ error }, { status: 400 });
-    }
-
-    return NextResponse.json({ success: true, data });
-  } catch (err) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-}
+          <p style="font-
