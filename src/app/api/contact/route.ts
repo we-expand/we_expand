@@ -5,16 +5,19 @@ let resend: Resend;
 
 export async function POST(request: Request) {
   try {
-    // Inicialização atrasada para garantir compatibilidade com o build da Vercel
     if (!resend) {
-      resend = new Resend("re_BGtVsfeL_Ba2na9agwdyMUXjJhr8NsstR"); 
+      const apiKey = process.env.RESEND_API_KEY;
+      if (!apiKey) {
+        return NextResponse.json({ error: 'RESEND_API_KEY not configured' }, { status: 500 });
+      }
+      resend = new Resend(apiKey);
     }
 
     const { name, email, company, message } = await request.json();
 
     const { data, error } = await resend.emails.send({
       from: 'We Expand Intel <onboarding@resend.dev>',
-      to: ['info@we-expand.com'],
+      to: [email],
       subject: `🔥 Novo Mapeamento Operacional: ${company}`,
       html: `
         <div style="font-family: sans-serif; background-color: #050505; color: #ffffff; padding: 40px; border-radius: 24px;">
