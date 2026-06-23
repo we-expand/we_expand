@@ -1,17 +1,15 @@
 'use client';
-
+import { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Cpu, Network, Workflow, ArrowUpRight, Diamond, CheckCircle, Send } from 'lucide-react';
-import { useRef, useState, useEffect } from 'react';
+import { Cpu, Network, Workflow, Diamond, CheckCircle, Send } from 'lucide-react';
 
-// --- LOGOTIPO E COMPONENTES ORIGINAIS (MANTIDOS) ---
+// Logotipo WeExpand
 const WeExpandLogo = () => (
-  <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-105 transition-transform duration-700 ease-out">
-    <path d="M30 45L45 80L60 55L75 80L90 45" stroke="url(#line-grad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="90" cy="45" r="4" fill="#00F0FF" className="animate-pulse" />
+  <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M30 45L45 80L60 55L75 80L90 45" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="90" cy="45" r="4" fill="#00F0FF" />
     <circle cx="60" cy="55" r="4" fill="#7000FF" />
     <circle cx="30" cy="45" r="4" fill="#00F0FF" />
-    <defs><linearGradient id="line-grad" x1="30" y1="62.5" x2="90" y2="62.5"><stop stopColor="#ffffff" /><stop offset="1" stopColor="#ffffff" stopOpacity="0.2" /></linearGradient></defs>
   </svg>
 );
 
@@ -23,29 +21,19 @@ const InteractiveBackground = () => {
     return () => window.removeEventListener('mousemove', updateMousePosition);
   }, []);
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-      <div className="absolute inset-0 bg-[#050505] z-0" /><div className="absolute inset-0 z-10 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle at center, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-      <div className="absolute w-[800px] h-[800px] rounded-full opacity-25 blur-[130px] transition-transform duration-500 ease-out z-20" style={{ background: 'radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(112, 0, 255, 0.05) 40%, transparent 70%)', transform: `translate(${mousePosition.x - 400}px, ${mousePosition.y - 400}px)` }} />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 via-transparent to-[#050505] z-30" />
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-[#050505]">
+      <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle at center, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
     </div>
   );
 };
 
-function ExpertiseCard({ icon, title, desc, delay }: { icon: any, title: string, desc: string, delay: number }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay }} className="p-12 bg-white/[0.02] border border-white/5 rounded-2xl">
-      <div className="mb-12 bg-black/50 w-20 h-20 flex items-center justify-center rounded-2xl border border-white/10">{icon}</div>
-      <h3 className="font-space text-2xl font-bold mb-4">{title}</h3>
-      <p className="text-white/50">{desc}</p>
-    </motion.div>
-  );
-}
-
-// --- FUNÇÃO HOME COM FORMULÁRIO INTEGRADO ---
 export default function Home() {
   const containerRef = useRef(null);
-  const [formState, setFormState] = useState({ name: '', email: '', company: '', message: '' });
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
+  const yParallax = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [formState, setFormState] = useState({ name: '', email: '', company: '', message: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,28 +44,60 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formState),
       });
-      if (response.ok) { setStatus('success'); setFormState({ name: '', email: '', company: '', message: '' }); }
-      else { alert('Erro na transmissão.'); setStatus('idle'); }
-    } catch (e) { alert('Erro de rede.'); setStatus('idle'); }
+      if (response.ok) {
+        setStatus('success');
+      } else {
+        alert('Falha na transmissão.');
+        setStatus('idle');
+      }
+    } catch (error) {
+      alert('Erro de conexão.');
+      setStatus('idle');
+    }
   };
 
   return (
     <main ref={containerRef} className="relative min-h-screen bg-[#050505] text-white">
       <InteractiveBackground />
-      {/* HEADER, HERO, MANIFESTO E EXPERTISE... (Seu design original aqui) */}
-      
-      {/* RODAPÉ E FORMULÁRIO */}
+
+      {/* Header */}
+      <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/40 backdrop-blur-2xl">
+        <div className="max-w-[1440px] mx-auto px-8 h-24 flex items-center justify-between">
+          <div className="flex items-center gap-4"><WeExpandLogo /><span className="font-bold text-2xl">WeExpand</span></div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative z-10 h-screen flex items-center px-8">
+        <motion.div style={{ y: yParallax }} className="max-w-[1440px] mx-auto">
+          <h1 className="text-[5rem] md:text-[8rem] font-bold tracking-tighter leading-[0.85]">ENGINEERED <br/>FOR THE UNPREDICTABLE.</h1>
+        </motion.div>
+      </section>
+
+      {/* RODAPÉ COM FORMULÁRIO INTEGRADO */}
       <footer id="contact" className="relative z-10 bg-black pt-32 pb-12 px-8 border-t border-white/10">
-        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-2 gap-16">
-          <div><h2 className="text-5xl font-bold">The Algorithmic Advantage.</h2></div>
-          <div className="bg-white/[0.01] border border-white/5 p-10 rounded-3xl">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <input required name="name" placeholder="Nome" className="w-full bg-white/[0.02] p-3 rounded-xl border border-white/10" value={formState.name} onChange={e => setFormState({...formState, name: e.target.value})} />
-              <input required type="email" name="email" placeholder="E-mail" className="w-full bg-white/[0.02] p-3 rounded-xl border border-white/10" value={formState.email} onChange={e => setFormState({...formState, email: e.target.value})} />
-              <input required name="company" placeholder="Empresa" className="w-full bg-white/[0.02] p-3 rounded-xl border border-white/10" value={formState.company} onChange={e => setFormState({...formState, company: e.target.value})} />
-              <textarea required name="message" placeholder="Mensagem" className="w-full bg-white/[0.02] p-3 rounded-xl border border-white/10 h-32" value={formState.message} onChange={e => setFormState({...formState, message: e.target.value})} />
-              <button type="submit" className="w-full bg-white text-black font-bold p-4 rounded-xl">{status === 'submitting' ? 'Enviando...' : 'Solicitar Sessão Estratégica'}</button>
-            </form>
+        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-2 gap-16 items-start">
+          <div>
+            <h2 className="text-5xl font-bold mb-8">The Algorithmic Advantage.</h2>
+            <p className="text-white/40">Agende uma sessão de Discovery.</p>
+          </div>
+
+          <div className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl backdrop-blur-md">
+            <AnimatePresence mode="wait">
+              {status !== 'success' ? (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <input required name="name" placeholder="Nome" className="w-full bg-white/[0.02] border border-white/10 p-3 rounded-xl" value={formState.name} onChange={e => setFormState({...formState, name: e.target.value})} />
+                  <input required type="email" name="email" placeholder="E-mail" className="w-full bg-white/[0.02] border border-white/10 p-3 rounded-xl" value={formState.email} onChange={e => setFormState({...formState, email: e.target.value})} />
+                  <input required name="company" placeholder="Empresa" className="w-full bg-white/[0.02] border border-white/10 p-3 rounded-xl" value={formState.company} onChange={e => setFormState({...formState, company: e.target.value})} />
+                  <textarea required name="message" placeholder="Mensagem" className="w-full bg-white/[0.02] border border-white/10 p-3 rounded-xl h-32" value={formState.message} onChange={e => setFormState({...formState, message: e.target.value})} />
+                  <button type="submit" disabled={status === 'submitting'} className="w-full bg-white text-black font-bold p-4 rounded-xl">
+                    {status === 'submitting' ? 'Enviando...' : 'Solicitar Sessão Estratégica'}
+                  </button>
+                </form>
+              ) : (
+                <div className="text-center py-12"><CheckCircle className="w-16 h-16 text-[#00F0FF] mx-auto mb-4" /><h3 className="text-2xl font-bold">Sinal Neural Recebido.</h3></div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </footer>
