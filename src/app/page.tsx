@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Send, CheckCircle } from 'lucide-react';
+// Mantenha suas importações originais aqui (Cpu, Network, etc)
 
 export default function Home() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
@@ -28,15 +28,59 @@ export default function Home() {
     }
   };
 
-  // ... (Mantenha aqui todo o seu design, InteractiveBackground, Header, Hero, Expertise, etc.)
-  // IMPORTANTE: No rodapé, onde está o seu <form>, garanta que ele use:
-  // onSubmit={handleSubmit}
-  // E que os inputs tenham o onChange={e => setFormState({...formState, nomeDoCampo: e.target.value})}
-  
   return (
-    <main>
-       {/* SEU DESIGN COMPLETO AQUI */}
-       {/* APENAS CERTIFIQUE-SE DE QUE O FORMULÁRIO ESTÁ CONECTADO AO handleSubmit */}
+    <main className="bg-[#050505] text-white min-h-screen">
+      {/* COLE AQUI TODO O SEU DESIGN ORIGINAL:
+         <InteractiveBackground />
+         <Header />
+         <Hero />
+         <Expertise />
+      */}
+
+      {/* NO RODAPÉ, ONDE ESTÁ O SEU FORMULÁRIO, USE ESTE BLOCO: */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <input 
+          required 
+          name="name"
+          placeholder="Seu Nome" 
+          className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3"
+          value={formState.name}
+          onChange={e => setFormState({...formState, name: e.target.value})}
+        />
+        <input 
+          required type="email" 
+          name="email"
+          placeholder="E-mail Executivo" 
+          className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3"
+          value={formState.email}
+          onChange={e => setFormState({...formState, email: e.target.value})}
+        />
+        <input 
+          required 
+          name="company"
+          placeholder="Corporação" 
+          className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3"
+          value={formState.company}
+          onChange={e => setFormState({...formState, company: e.target.value})}
+        />
+        <textarea 
+          required 
+          name="message"
+          rows={4}
+          placeholder="Desafio Operacional" 
+          className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3"
+          value={formState.message}
+          onChange={e => setFormState({...formState, message: e.target.value})}
+        />
+        <button 
+          type="submit" 
+          disabled={status === 'submitting'}
+          className="w-full bg-white text-black font-bold py-4 rounded-xl"
+        >
+          {status === 'submitting' ? 'Processando...' : 
+           status === 'success' ? 'Sinal Neural Recebido!' : 'Solicitar Sessão Estratégica'}
+        </button>
+      </form>
     </main>
   );
 }
