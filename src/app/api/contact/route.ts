@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
 // Inicializa o Resend com a variável de ambiente segura
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(re_NHnfHYcv_ADPQcaTLGxwiyU31Xv8fbYVZ);
 
 export async function POST(request: Request) {
   try {
