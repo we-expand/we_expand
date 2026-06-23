@@ -263,7 +263,7 @@ UNPREDICTABLE.
 
 <p className="text-xl md:text-2xl font-light text-white/60 leading-relaxed max-w-2xl">
 
-<strong className="text-white font-medium">O que fazemos, em uma frase:</strong> desenhamos e construímos sistemas de Inteligência Artificial sob medida que automatizam decisões e se integram aos sistemas que sua empresa já usa. Transformamos dados parados em inteligência preditiva e, quando necessário, alocamos esquadrões de especialistas para executar — sem inflar o seu time interno.
+Criamos Inteligência Artificial que pensa e age pelo seu negócio. Desenvolvemos ecossistemas sob medida que se conectam à sua infraestrutura, convertendo dados ociosos em predições acionáveis. Quando o projeto exige, alocamos esquadrões de especialistas para implementar e operar os sistemas, mantendo sua equipe interna enxuta e focada no core business.
 
 </p>
 
