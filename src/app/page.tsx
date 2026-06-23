@@ -209,7 +209,7 @@ return (
 
 <a href="#vision" className="hover:text-[#00F0FF] transition-colors">The Vision</a>
 
-<a href="#expertise" className="hover:text-[#00F0FF] transition-colors">Expertise</a>
+<a href="#expertise" className="hover:text-[#00F0FF] transition-colors">Soluções</a>
 
 </nav>
 
@@ -229,9 +229,9 @@ return (
 
 {/* HERO SECTION */}
 
-<section id="vision" className="relative z-10 h-screen flex items-center px-8">
+<section id="vision" className="relative z-10 min-h-screen flex items-center px-8 pt-32 pb-20">
 
-<motion.div style={{ y: yParallax, opacity: opacityFade }} className="max-w-[1440px] mx-auto w-full mt-20">
+<motion.div style={{ y: yParallax, opacity: opacityFade }} className="max-w-[1440px] mx-auto w-full">
 
 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
 
@@ -239,12 +239,12 @@ return (
 
 <span className="w-12 h-[1px] bg-[#00F0FF]" />
 
-<span className="font-space text-[#00F0FF] uppercase tracking-[0.3em] text-xs font-bold">Engenharia de Decisão e Ativos Cognitivos</span>
+<span className="font-space text-[#00F0FF] uppercase tracking-[0.3em] text-xs font-bold">Consultoria & Engenharia de Inteligência Artificial</span>
 
 </div>
 
 
-<h1 className="font-space text-[5rem] md:text-[8rem] leading-[0.85] font-bold tracking-tighter mb-10">
+<h1 className="font-space text-[4rem] md:text-[7rem] leading-[0.9] font-bold tracking-tighter mb-10">
 
 ENGINEERED <br />
 
@@ -259,13 +259,34 @@ UNPREDICTABLE.
 </h1>
 
 
-<div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 max-w-4xl">
+<div className="flex flex-col gap-10 max-w-4xl">
 
-<p className="text-xl md:text-2xl font-light text-white/60 leading-relaxed max-w-xl">
+<p className="text-xl md:text-2xl font-light text-white/60 leading-relaxed max-w-2xl">
 
-Nós não desenvolvemos softwares tradicionais. Nós construímos o <strong className="text-white font-medium">Sistema Nervoso</strong> da sua empresa. Transformamos dados mortos em inteligência preditiva e alocamos Esquadrões de IA de elite para tornar a sua operação autônoma, escalável e imune a falhas humanas.
+<strong className="text-white font-medium">O que fazemos, em uma frase:</strong> desenhamos e construímos sistemas de Inteligência Artificial sob medida que automatizam decisões e se integram aos sistemas que sua empresa já usa. Transformamos dados parados em inteligência preditiva e, quando necessário, alocamos esquadrões de especialistas para executar — sem inflar o seu time interno.
 
 </p>
+
+
+<div className="flex flex-wrap items-center gap-6">
+
+<a href="#contact" className="relative px-8 py-4 bg-white text-black font-space font-bold uppercase text-xs tracking-widest rounded-full overflow-hidden group inline-flex items-center gap-2 cursor-pointer">
+
+<span className="relative z-10 group-hover:text-white transition-colors duration-500">Agende uma Sessão de Discovery</span>
+
+<ArrowUpRight className="relative z-10 w-4 h-4 group-hover:text-white group-hover:rotate-45 transition-all duration-500" />
+
+<div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#00F0FF] to-[#7000FF] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
+
+</a>
+
+<a href="#expertise" className="font-space text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white border-b border-white/20 hover:border-white pb-1 transition-colors">
+
+Conheça nossas soluções
+
+</a>
+
+</div>
 
 </div>
 
@@ -277,7 +298,7 @@ Nós não desenvolvemos softwares tradicionais. Nós construímos o <strong clas
 
 
 
-{/* MANIFESTO / SEPARADOR */}
+{/* MANIFESTO + CLAREZA DO QUE ENTREGAMOS */}
 
 <section className="relative z-10 py-32 px-8 bg-[#050505]/90 border-t border-white/5 backdrop-blur-xl">
 
@@ -285,11 +306,17 @@ Nós não desenvolvemos softwares tradicionais. Nós construímos o <strong clas
 
 <Diamond className="w-8 h-8 mx-auto mb-10 text-[#7000FF] opacity-50" />
 
-<h2 className="font-space text-3xl md:text-5xl font-light leading-tight">
+<h2 className="font-space text-3xl md:text-5xl font-light leading-tight mb-12">
 
 "O software tradicional dita como você trabalha hoje. A Inteligência Artificial preditiva dita <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#7000FF] font-bold">se você existirá amanhã.</span> Pare de comprar código obsoleto. Comece a treinar o cérebro da sua corporação."
 
 </h2>
+
+<p className="text-white/40 text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-light">
+
+Na prática: auditamos sua operação para achar onde a IA gera retorno real <span className="text-white/70">(Cognitive Discovery)</span>, construímos o sistema proprietário que resolve isso <span className="text-white/70">(Autonomous Engines)</span> e, quando preciso, colocamos especialistas sêniores dentro do seu time para executar <span className="text-white/70">(Neural Squads)</span>.
+
+</p>
 
 </div>
 
@@ -303,6 +330,22 @@ Nós não desenvolvemos softwares tradicionais. Nós construímos o <strong clas
 
 <div className="max-w-[1440px] mx-auto">
 
+<div className="flex items-center gap-3 mb-6 justify-center">
+
+<span className="w-12 h-[1px] bg-[#00F0FF]" />
+
+<span className="font-space text-[#00F0FF] uppercase tracking-[0.3em] text-xs font-bold">Como trabalhamos</span>
+
+<span className="w-12 h-[1px] bg-[#00F0FF]" />
+
+</div>
+
+<h2 className="font-space text-3xl md:text-5xl font-bold tracking-tighter text-center mb-20 max-w-3xl mx-auto">
+
+Três formas de expandir sua operação com IA.
+
+</h2>
+
 <div className="grid md:grid-cols-3 gap-6">
 
 <ExpertiseCard
@@ -311,7 +354,9 @@ icon={<Network className="w-10 h-10 text-[#00F0FF]" />}
 
 title="Cognitive Discovery"
 
-desc="Auditoria cirúrgica. Mapeamos o DNA da sua operação para encontrar ralos financeiros invisíveis. Desenhamos a arquitetura neural exata e o plano de ação para substituí-los por lucro e eficiência autônoma."
+desc="Auditoria cirúrgica. Mapeamos o DNA da sua operação para encontrar ralos financeiros invisíveis e desenhamos a arquitetura de IA exata para substituí-los por eficiência autônoma."
+
+deliverable="Diagnóstico operacional + roteiro de implementação priorizado por ROI."
 
 delay={0}
 
@@ -323,7 +368,9 @@ icon={<Workflow className="w-10 h-10 text-[#7000FF]" />}
 
 title="Autonomous Engines"
 
-desc="Esqueça softwares de prateleira. Desenvolvemos ecossistemas de IA proprietários, motores de precificação e agentes de orientação em tempo real que se integram nativamente ao seu ERP."
+desc="Esqueça softwares de prateleira. Desenvolvemos sistemas de IA proprietários — motores de precificação, agentes em tempo real — integrados nativamente ao seu ERP e às suas bases de dados."
+
+deliverable="Sistema de IA proprietário, em produção e integrado à sua operação."
 
 delay={0.2}
 
@@ -335,7 +382,9 @@ icon={<Cpu className="w-10 h-10 text-white" />}
 
 title="Neural Squads"
 
-desc="Não infle o seu RH corporativo. Alocamos in-loco (ou remotamente) nossos esquadrões sêniores de cientistas de dados e engenheiros de IA para executar o seu roadmap tecnológico em tempo recorde."
+desc="Não infle o seu RH corporativo. Alocamos in-loco ou remotamente esquadrões sêniores de cientistas de dados e engenheiros de IA para executar o seu roadmap tecnológico em tempo recorde."
+
+deliverable="Equipe especialista dedicada, integrada ao seu time, sem custo de contratação."
 
 delay={0.4}
 
@@ -362,7 +411,7 @@ delay={0.4}
 
 <p className="text-white/40 mb-10 leading-relaxed">
 
-Construir inteligência proprietária não é para qualquer operação. É um movimento estratégico para empresas que desejam dominar o seu setor. Agende uma sessão de Discovery com nossos arquitetos estruturais. Operamos com vagas limitadas de alocação de Squads para garantir excelência absoluta na entrega.
+Construir inteligência proprietária não é para qualquer operação. É um movimento estratégico para empresas que desejam dominar o seu setor. Comece pelo Discovery: em uma sessão estratégica com nossos arquitetos, mapeamos onde a IA gera mais valor na sua operação e o retorno esperado — antes de você investir um real. Operamos com vagas limitadas de alocação de Squads para garantir excelência absoluta na entrega.
 
 </p>
 
@@ -631,7 +680,7 @@ Enviar nova requisição
 
 
 
-function ExpertiseCard({ icon, title, desc, delay }: { icon: any, title: string, desc: string, delay: number }) {
+function ExpertiseCard({ icon, title, desc, deliverable, delay }: { icon: any, title: string, desc: string, deliverable: string, delay: number }) {
 
 return (
 
@@ -645,14 +694,14 @@ viewport={{ once: true, margin: "-100px" }}
 
 transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
 
-className="group relative p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 overflow-hidden backdrop-blur-sm rounded-2xl"
+className="group relative p-12 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 overflow-hidden backdrop-blur-sm rounded-2xl flex flex-col"
 
 >
 
 <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#00F0FF]/10 to-transparent rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
 
-<div className="relative z-10">
+<div className="relative z-10 flex flex-col flex-1">
 
 <div className="mb-12 bg-black/50 w-20 h-20 flex items-center justify-center rounded-2xl border border-white/10 group-hover:scale-110 transition-transform duration-500">
 
@@ -662,14 +711,14 @@ className="group relative p-12 bg-white/[0.02] border border-white/5 hover:bg-wh
 
 <h3 className="font-space text-2xl font-bold mb-4">{title}</h3>
 
-<p className="text-white/50 leading-relaxed mb-12 min-h-[80px] font-light">{desc}</p>
+<p className="text-white/50 leading-relaxed mb-8 min-h-[80px] font-light">{desc}</p>
 
 
-<div className="flex items-center gap-3 text-xs font-space font-bold uppercase tracking-widest text-white/30 group-hover:text-white transition-colors">
+<div className="mt-auto pt-6 border-t border-white/5">
 
-<span className="w-8 h-[1px] bg-white/20 group-hover:bg-[#00F0FF] group-hover:w-12 transition-all duration-500" />
+<span className="text-[10px] uppercase tracking-widest text-[#00F0FF]/70 font-space font-bold block mb-2">Entrega</span>
 
-Discover
+<p className="text-white/70 text-sm leading-relaxed">{deliverable}</p>
 
 </div>
 
