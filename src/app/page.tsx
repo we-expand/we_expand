@@ -65,15 +65,29 @@ export default function Home() {
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
+  // FUNÇÃO DE DISPARO REAL CONECTADA À API
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
 
-    // Simulação do processamento automático assíncrono (Edge Function / API)
-    setTimeout(() => {
-      setStatus('success');
-      setFormState({ name: '', email: '', company: '', message: '' });
-    }, 2000);
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormState({ name: '', email: '', company: '', message: '' });
+      } else {
+        setStatus('idle');
+        alert('Falha na transmissão do sinal. Verifique os dados e tente novamente.');
+      }
+    } catch (error) {
+      setStatus('idle');
+      alert('Erro de conexão com a rede neural.');
+    }
   };
 
   return (
@@ -161,11 +175,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOOTER ATUALIZADO COM O FORMULÁRIO ROBUSTO E AUTOMÁTICO */}
+      {/* FOOTER CORPORATIVO COM FORMULÁRIO DE VANGUARDA */}
       <footer id="contact" className="relative z-10 bg-black pt-32 pb-12 px-8 border-t border-white/10">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24 items-start">
           
-          {/* Coluna Esquerda: Conteúdo Conceitual */}
           <div className="max-w-xl">
             <h2 className="font-space text-5xl font-bold tracking-tighter mb-8">The Algorithmic Advantage.</h2>
             <p className="text-white/40 mb-10 leading-relaxed">
@@ -185,7 +198,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Coluna Direita: Formulário de Vanguarda Automatizado */}
           <div className="bg-white/[0.01] border border-white/5 p-8 md:p-10 rounded-3xl backdrop-blur-md relative overflow-hidden">
             <AnimatePresence mode="wait">
               {status !== 'success' ? (
