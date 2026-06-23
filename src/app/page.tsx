@@ -308,7 +308,8 @@ Conheça nossas soluções
 
 <h2 className="font-space text-3xl md:text-5xl font-light leading-tight mb-12">
 
-"O software tradicional dita como você trabalha hoje. A Inteligência Artificial preditiva dita <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#7000FF] font-bold">se você existirá amanhã.</span> Pare de comprar código obsoleto. Comece a treinar o cérebro da sua corporação."
+"O software tradicional dita como você trabalha hoje. <br />
+A Inteligência Artificial preditiva dita <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#7000FF] font-bold">se você existirá amanhã.</span> Pare de comprar código obsoleto. Comece a treinar o cérebro da sua corporação."
 
 </h2>
 
