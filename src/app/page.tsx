@@ -628,8 +628,7 @@ export default function Home() {
             <div className="flex gap-16 text-sm font-space uppercase tracking-[0.1em] text-white/30 pt-6 border-t border-white/5">
               <div className="flex flex-col gap-2">
                 <span className="text-white font-bold">Social</span>
-                <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-                <a href="#" className="hover:text-white transition-colors">Twitter // X</a>
+                <a href="https://linkedin.com/company/we-expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">LinkedIn</a>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-white font-bold">Presence</span>
