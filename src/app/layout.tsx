@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
 export const metadata: Metadata = {
-  title: "We Expand | Excellence in AI",
+  title: "We Expand",
   description: "Consultoria e Engenharia de Decisão. Expandindo limites através da Inteligência Artificial.",
 };
 
