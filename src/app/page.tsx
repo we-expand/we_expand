@@ -20,30 +20,218 @@ const WeExpandLogo = () => (
   </svg>
 );
 
-// BACKGROUND NEURAL INTERATIVO E DELICADO
+// CAMPO DE ATENÇÃO — background interativo, delicado e etéreo.
+//
+// Um campo vetorial de fios brancos finíssimos (como limalha de ferro num campo
+// magnético) que ondula em repouso e, quando o cursor se aproxima, se reorganiza
+// e orbita o ponteiro com um leve brilho ciano da marca. É uma metáfora visual
+// de "attention" / campos de gradiente — IA, sem a constelação de pontinhos de
+// sempre. Renderizado em <canvas> para performance; respeita prefers-reduced-motion
+// e nunca bloqueia cliques (pointer-events-none).
 const InteractiveBackground = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const SPACING = 46;   // distância entre os fios da grade (px)
+    const BASE_LEN = 9;    // comprimento do fio em repouso (px)
+    const RADIUS = 240;    // raio de influência do cursor (px)
+
+    let width = 0;
+    let height = 0;
+    let points: { x: number; y: number }[] = [];
+
+    // Estado do ponteiro guardado fora do React para não re-renderizar por frame.
+    const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false, seeded: false };
+
+    const buildGrid = () => {
+      points = [];
+      const cols = Math.ceil(width / SPACING) + 2;
+      const rows = Math.ceil(height / SPACING) + 2;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          points.push({ x: c * SPACING - SPACING, y: r * SPACING - SPACING });
+        }
+      }
     };
-    window.addEventListener('mousemove', updateMousePosition);
-    return () => window.removeEventListener('mousemove', updateMousePosition);
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.lineCap = 'round';
+      buildGrid();
+    };
+
+    const draw = (t: number) => {
+      ctx.clearRect(0, 0, width, height);
+
+      const active = pointer.active;
+      const px = pointer.x;
+      const py = pointer.y;
+      const highlights: { x: number; y: number; ux: number; uy: number; inf: number }[] = [];
+
+      // Passo 1 — campo ambiente: todos os fios brancos num único traçado (rápido).
+      ctx.beginPath();
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+
+        // Direção orgânica do fluxo (ruído suave via senos sobrepostos).
+        const a =
+          Math.sin(p.x * 0.0021 + t) +
+          Math.cos(p.y * 0.0021 - t * 0.8) +
+          Math.sin((p.x + p.y) * 0.0013 + t * 1.3);
+        let bx = Math.cos(a * 1.2);
+        let by = Math.sin(a * 1.2);
+
+        let inf = 0;
+        if (active) {
+          const dx = px - p.x;
+          const dy = py - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < RADIUS) {
+            inf = 1 - dist / RADIUS;
+            inf *= inf; // suaviza o decaimento nas bordas
+            // Direção tangencial → os fios orbitam o cursor (vórtice delicado).
+            const ang = Math.atan2(dy, dx) + Math.PI / 2;
+            bx = bx * (1 - inf) + Math.cos(ang) * inf;
+            by = by * (1 - inf) + Math.sin(ang) * inf;
+          }
+        }
+
+        const norm = Math.hypot(bx, by) || 1;
+        const ux = bx / norm;
+        const uy = by / norm;
+
+        if (inf > 0.01) {
+          highlights.push({ x: p.x, y: p.y, ux, uy, inf });
+          continue; // desenhado no passo 2 com cor/brilho próprios
+        }
+
+        const hx = ux * BASE_LEN * 0.5;
+        const hy = uy * BASE_LEN * 0.5;
+        ctx.moveTo(p.x - hx, p.y - hy);
+        ctx.lineTo(p.x + hx, p.y + hy);
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Passo 2 — fios sob influência do cursor: alongam, brilham e tingem de ciano.
+      for (let i = 0; i < highlights.length; i++) {
+        const h = highlights[i];
+        const len = BASE_LEN + h.inf * 13;
+        const hx = h.ux * len * 0.5;
+        const hy = h.uy * len * 0.5;
+        const k = h.inf * 0.85; // branco → ciano (#00F0FF)
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${Math.round(255 - 255 * k)},${Math.round(255 - 15 * k)},255,${0.06 + h.inf * 0.5})`;
+        ctx.lineWidth = 1 + h.inf * 0.8;
+        ctx.moveTo(h.x - hx, h.y - hy);
+        ctx.lineTo(h.x + hx, h.y + hy);
+        ctx.stroke();
+
+        // Nó luminoso no foco mais intenso.
+        if (h.inf > 0.6) {
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(0,240,255,${(h.inf - 0.6) * 0.55})`;
+          ctx.arc(h.x, h.y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    };
+
+    let raf = 0;
+    let time = 0;
+
+    const loop = () => {
+      time += 0.0045;
+
+      // Cursor com inércia (movimento sedoso, não mecânico).
+      if (!pointer.seeded && pointer.tx > -9000) {
+        pointer.x = pointer.tx;
+        pointer.y = pointer.ty;
+        pointer.seeded = true;
+      }
+      pointer.x += (pointer.tx - pointer.x) * 0.08;
+      pointer.y += (pointer.ty - pointer.y) * 0.08;
+
+      const glow = glowRef.current;
+      if (glow) {
+        if (pointer.active) {
+          glow.style.transform = `translate3d(${pointer.x - 300}px, ${pointer.y - 300}px, 0)`;
+          glow.style.opacity = '1';
+        } else {
+          glow.style.opacity = '0';
+        }
+      }
+
+      draw(time);
+      raf = requestAnimationFrame(loop);
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      pointer.tx = e.clientX;
+      pointer.ty = e.clientY;
+      pointer.active = true;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      const tch = e.touches[0];
+      if (!tch) return;
+      pointer.tx = tch.clientX;
+      pointer.ty = tch.clientY;
+      pointer.active = true;
+    };
+    const onLeave = () => { pointer.active = false; };
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    if (reduceMotion) {
+      // Acessibilidade: sem animação — apenas um campo estático e elegante.
+      draw(0.6);
+      return () => window.removeEventListener('resize', resize);
+    }
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('mouseleave', onLeave);
+    raf = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('mouseleave', onLeave);
+    };
   }, []);
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-      <div className="absolute inset-0 bg-[#050505] z-0" />
-      <div className="absolute inset-0 z-10 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle at center, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+    <div aria-hidden className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-[#050505]">
+      <canvas ref={canvasRef} className="absolute inset-0 block" />
+      {/* Brilho suave da marca que acompanha o cursor (profundidade etérea). */}
       <div
-        className="absolute w-[800px] h-[800px] rounded-full opacity-25 blur-[130px] transition-transform duration-500 ease-out z-20"
-        style={{
-          background: 'radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(112, 0, 255, 0.05) 40%, transparent 70%)',
-          transform: `translate(${mousePosition.x - 400}px, ${mousePosition.y - 400}px)`
-        }}
+        ref={glowRef}
+        className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-0 transition-opacity duration-700 ease-out"
+        style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.10), rgba(112,0,255,0.04) 45%, transparent 70%)' }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 via-transparent to-[#050505] z-30" />
+      {/* Vinheta + fade inferior para manter o texto sempre legível. */}
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 55%, #050505 100%)' }} />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505]" />
     </div>
   );
 };
