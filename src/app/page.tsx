@@ -1,21 +1,25 @@
 'use client';
 
 import { motion, useScroll, useTransform, AnimatePresence, type Variants } from 'framer-motion';
-import { Cpu, Network, Workflow, ArrowUpRight, Diamond, CheckCircle, Send } from 'lucide-react';
+import { Cpu, Network, Workflow, ArrowUpRight, Diamond, CheckCircle, Send, Phone } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 
 // LOGOTIPO VETORIAL PURO (SEM FUNDO)
-// Ao passar o mouse, dá um "boing" elástico — spring com baixo damping faz o
-// próprio motor de física exagerar e voltar (efeito de elástico), em vez de um
-// scale/transition linear comum.
+// Ao passar o mouse, o logo "abre e fecha" como um elástico: squash-and-stretch
+// — largura e altura oscilam em direções opostas (quando estica na horizontal,
+// comprime na vertical, e vice-versa) antes de assentar no tamanho normal.
+// Duração longa (0.9s) e amplitude grande para o movimento ser bem perceptível.
 const WeExpandLogo = () => (
   <motion.svg
     viewBox="26 24 76 76"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className="w-12 h-12 md:w-12 md:h-12"
-    whileHover={{ scale: 1.22, rotate: [0, -8, 6, -3, 0] }}
-    transition={{ type: 'spring', stiffness: 320, damping: 7, mass: 0.6 }}
+    whileHover={{
+      scaleX: [1, 1.55, 0.72, 1.25, 0.9, 1.05, 1],
+      scaleY: [1, 0.6, 1.4, 0.82, 1.12, 0.97, 1],
+    }}
+    transition={{ duration: 0.9, ease: 'easeInOut' }}
   >
     <path d="M30 45L45 80L60 55L75 80L90 45" stroke="url(#line-grad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
     <circle cx="90" cy="45" r="4" fill="#00F0FF" className="animate-pulse" />
@@ -471,8 +475,25 @@ export default function Home() {
     <main ref={containerRef} className="relative min-h-screen overflow-hidden bg-[#050505]">
       <InteractiveBackground />
 
+      {/* FAIXA DE CONTATO DIRETO — lugar de destaque máximo, acima de tudo, sempre visível */}
+      <div className="fixed top-0 inset-x-0 z-[60] bg-black border-b border-white/10 px-8">
+        <div className="max-w-[1440px] mx-auto h-9 flex items-center justify-center">
+          <a
+            href="tel:+5511925651315"
+            className="flex items-center gap-2 font-space font-bold text-[11px] sm:text-xs tracking-wider text-white/90 hover:text-[#00F0FF] transition-colors"
+          >
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[#00F0FF] opacity-60 animate-ping" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F0FF]" />
+            </span>
+            <Phone className="w-3.5 h-3.5 shrink-0" />
+            +55 11 92565-1315
+          </a>
+        </div>
+      </div>
+
       {/* HEADER COESO */}
-      <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/40 backdrop-blur-2xl transition-all duration-500 px-8">
+      <header className="fixed top-9 w-full z-50 border-b border-white/5 bg-[#050505]/40 backdrop-blur-2xl transition-all duration-500 px-8">
         <div className="max-w-[1440px] mx-auto h-20 md:h-24 flex items-center justify-between gap-3">
           <div className="flex items-center gap-1 md:gap-2 group cursor-pointer shrink-0" onClick={scrollToTop}>
             <WeExpandLogo />
@@ -490,7 +511,7 @@ export default function Home() {
       </header>
 
       {/* HERO SECTION */}
-      <section id="vision" className="relative z-10 min-h-screen flex items-center px-8 pt-44 pb-20">
+      <section id="vision" className="relative z-10 min-h-screen flex items-center px-8 pt-48 pb-20">
         <motion.div style={{ y: yParallax, opacity: opacityFade }} className="max-w-[1440px] mx-auto w-full">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
             <div className="flex items-center gap-3 mb-8">
