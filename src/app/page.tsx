@@ -20,14 +20,16 @@ const WeExpandLogo = () => (
   </svg>
 );
 
-// CAMPO DE ATENÇÃO — background interativo, delicado e etéreo.
+// CAMPO LATENTE — background interativo, full-screen, com cara de IA.
 //
-// Um campo vetorial de fios brancos finíssimos (como limalha de ferro num campo
-// magnético) que ondula em repouso e, quando o cursor se aproxima, se reorganiza
-// e orbita o ponteiro com um leve brilho ciano da marca. É uma metáfora visual
-// de "attention" / campos de gradiente — IA, sem a constelação de pontinhos de
-// sempre. Renderizado em <canvas> para performance; respeita prefers-reduced-motion
-// e nunca bloqueia cliques (pointer-events-none).
+// A tela toda é varrida por linhas de fluxo curvas e finíssimas — como as curvas
+// de nível de uma "loss landscape" (a superfície que um modelo desce durante o
+// treinamento). Elas se movem devagar em branco quase invisível, sempre, dando
+// sensação de computação contínua em segundo plano. Onde o usuário interage,
+// nasce um micro-grafo neural temporário: pontos próximos ao cursor se conectam
+// por linhas pulsantes em gradiente ciano→violeta (cores da marca), como
+// ativações se propagando entre neurônios. Renderizado em <canvas> para
+// performance; respeita prefers-reduced-motion e nunca bloqueia cliques.
 const InteractiveBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
@@ -40,24 +42,40 @@ const InteractiveBackground = () => {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const SPACING = 46;   // distância entre os fios da grade (px)
-    const BASE_LEN = 9;    // comprimento do fio em repouso (px)
-    const RADIUS = 240;    // raio de influência do cursor (px)
+    const FLOW_SPACING = 64;   // espaçamento da grade de linhas de fluxo (px)
+    const FLOW_SEGMENTS = 7;    // segmentos por linha de fluxo (define a curvatura)
+    const FLOW_STEP = 11;       // comprimento de cada segmento (px)
+    const NODE_SPACING = 86;    // espaçamento da grade de nós do micro-grafo (px)
+    const RADIUS = 260;         // raio de ativação do micro-grafo ao redor do cursor (px)
+    const LINK_DIST = 130;      // distância máxima para ligar dois nós ativos
 
     let width = 0;
     let height = 0;
-    let points: { x: number; y: number }[] = [];
+    let flowSeeds: { x: number; y: number }[] = [];
+    let nodes: { x: number; y: number }[] = [];
 
     // Estado do ponteiro guardado fora do React para não re-renderizar por frame.
     const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false, seeded: false };
 
-    const buildGrid = () => {
-      points = [];
-      const cols = Math.ceil(width / SPACING) + 2;
-      const rows = Math.ceil(height / SPACING) + 2;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          points.push({ x: c * SPACING - SPACING, y: r * SPACING - SPACING });
+    const buildGrids = () => {
+      flowSeeds = [];
+      const fc = Math.ceil(width / FLOW_SPACING) + 2;
+      const fr = Math.ceil(height / FLOW_SPACING) + 2;
+      for (let r = 0; r < fr; r++) {
+        for (let c = 0; c < fc; c++) {
+          flowSeeds.push({ x: c * FLOW_SPACING - FLOW_SPACING, y: r * FLOW_SPACING - FLOW_SPACING });
+        }
+      }
+
+      nodes = [];
+      const nc = Math.ceil(width / NODE_SPACING) + 2;
+      const nr = Math.ceil(height / NODE_SPACING) + 2;
+      for (let r = 0; r < nr; r++) {
+        for (let c = 0; c < nc; c++) {
+          // leve jitter para não parecer grade mecânica
+          const jx = (Math.sin(r * 12.9898 + c * 78.233) * 43758.5453 % 1) * NODE_SPACING * 0.3;
+          const jy = (Math.cos(r * 4.898 + c * 7.23) * 23421.631 % 1) * NODE_SPACING * 0.3;
+          nodes.push({ x: c * NODE_SPACING - NODE_SPACING + jx, y: r * NODE_SPACING - NODE_SPACING + jy });
         }
       }
     };
@@ -72,83 +90,87 @@ const InteractiveBackground = () => {
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.lineCap = 'round';
-      buildGrid();
+      buildGrids();
     };
+
+    // Campo de direção orgânico (ruído suave via senos sobrepostos).
+    const fieldAngle = (x: number, y: number, t: number) =>
+      (Math.sin(x * 0.0016 + t) + Math.cos(y * 0.0019 - t * 0.7) + Math.sin((x - y) * 0.001 + t * 1.1)) * 1.4;
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, width, height);
 
-      const active = pointer.active;
-      const px = pointer.x;
-      const py = pointer.y;
-      const highlights: { x: number; y: number; ux: number; uy: number; inf: number }[] = [];
-
-      // Passo 1 — campo ambiente: todos os fios brancos num único traçado (rápido).
+      // Passo 1 — linhas de fluxo cobrindo a tela inteira (sempre visível, bem sutil).
       ctx.beginPath();
-      for (let i = 0; i < points.length; i++) {
-        const p = points[i];
-
-        // Direção orgânica do fluxo (ruído suave via senos sobrepostos).
-        const a =
-          Math.sin(p.x * 0.0021 + t) +
-          Math.cos(p.y * 0.0021 - t * 0.8) +
-          Math.sin((p.x + p.y) * 0.0013 + t * 1.3);
-        let bx = Math.cos(a * 1.2);
-        let by = Math.sin(a * 1.2);
-
-        let inf = 0;
-        if (active) {
-          const dx = px - p.x;
-          const dy = py - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < RADIUS) {
-            inf = 1 - dist / RADIUS;
-            inf *= inf; // suaviza o decaimento nas bordas
-            // Direção tangencial → os fios orbitam o cursor (vórtice delicado).
-            const ang = Math.atan2(dy, dx) + Math.PI / 2;
-            bx = bx * (1 - inf) + Math.cos(ang) * inf;
-            by = by * (1 - inf) + Math.sin(ang) * inf;
-          }
+      for (let i = 0; i < flowSeeds.length; i++) {
+        let { x, y } = flowSeeds[i];
+        ctx.moveTo(x, y);
+        for (let s = 0; s < FLOW_SEGMENTS; s++) {
+          const a = fieldAngle(x, y, t);
+          x += Math.cos(a) * FLOW_STEP;
+          y += Math.sin(a) * FLOW_STEP;
+          ctx.lineTo(x, y);
         }
-
-        const norm = Math.hypot(bx, by) || 1;
-        const ux = bx / norm;
-        const uy = by / norm;
-
-        if (inf > 0.01) {
-          highlights.push({ x: p.x, y: p.y, ux, uy, inf });
-          continue; // desenhado no passo 2 com cor/brilho próprios
-        }
-
-        const hx = ux * BASE_LEN * 0.5;
-        const hy = uy * BASE_LEN * 0.5;
-        ctx.moveTo(p.x - hx, p.y - hy);
-        ctx.lineTo(p.x + hx, p.y + hy);
       }
-      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.045)';
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Passo 2 — fios sob influência do cursor: alongam, brilham e tingem de ciano.
-      for (let i = 0; i < highlights.length; i++) {
-        const h = highlights[i];
-        const len = BASE_LEN + h.inf * 13;
-        const hx = h.ux * len * 0.5;
-        const hy = h.uy * len * 0.5;
-        const k = h.inf * 0.85; // branco → ciano (#00F0FF)
+      // Passo 2 — micro-grafo neural local: ativa nós próximos ao cursor.
+      if (pointer.active) {
+        const px = pointer.x;
+        const py = pointer.y;
+        const active: { x: number; y: number; inf: number }[] = [];
 
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(${Math.round(255 - 255 * k)},${Math.round(255 - 15 * k)},255,${0.06 + h.inf * 0.5})`;
-        ctx.lineWidth = 1 + h.inf * 0.8;
-        ctx.moveTo(h.x - hx, h.y - hy);
-        ctx.lineTo(h.x + hx, h.y + hy);
-        ctx.stroke();
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          const dx = px - n.x;
+          const dy = py - n.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < RADIUS) {
+            let inf = 1 - dist / RADIUS;
+            inf *= inf;
+            active.push({ x: n.x, y: n.y, inf });
+          }
+        }
 
-        // Nó luminoso no foco mais intenso.
-        if (h.inf > 0.6) {
+        // Ligações entre nós ativos próximos — pulso de ativação.
+        for (let i = 0; i < active.length; i++) {
+          for (let j = i + 1; j < active.length; j++) {
+            const a = active[i];
+            const b = active[j];
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < LINK_DIST) {
+              const strength = (a.inf + b.inf) * 0.5 * (1 - dist / LINK_DIST);
+              if (strength < 0.04) continue;
+              const pulse = 0.65 + 0.35 * Math.sin(t * 3 + (a.x + b.x) * 0.02);
+              const k = strength * pulse;
+
+              const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+              grad.addColorStop(0, `rgba(0,240,255,${k * 0.8})`);
+              grad.addColorStop(1, `rgba(112,0,255,${k * 0.8})`);
+
+              ctx.beginPath();
+              ctx.strokeStyle = grad;
+              ctx.lineWidth = 0.8 + k * 1.2;
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Nós luminosos.
+        for (let i = 0; i < active.length; i++) {
+          const n = active[i];
+          if (n.inf < 0.12) continue;
+          const pulse = 0.7 + 0.3 * Math.sin(t * 4 + n.x * 0.05);
+          const r = 1.2 + n.inf * 2.2;
           ctx.beginPath();
-          ctx.fillStyle = `rgba(0,240,255,${(h.inf - 0.6) * 0.55})`;
-          ctx.arc(h.x, h.y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${n.inf > 0.55 ? '0,240,255' : '170,120,255'},${n.inf * 0.75 * pulse})`;
+          ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -166,13 +188,13 @@ const InteractiveBackground = () => {
         pointer.y = pointer.ty;
         pointer.seeded = true;
       }
-      pointer.x += (pointer.tx - pointer.x) * 0.08;
-      pointer.y += (pointer.ty - pointer.y) * 0.08;
+      pointer.x += (pointer.tx - pointer.x) * 0.12;
+      pointer.y += (pointer.ty - pointer.y) * 0.12;
 
       const glow = glowRef.current;
       if (glow) {
         if (pointer.active) {
-          glow.style.transform = `translate3d(${pointer.x - 300}px, ${pointer.y - 300}px, 0)`;
+          glow.style.transform = `translate3d(${pointer.x - 280}px, ${pointer.y - 280}px, 0)`;
           glow.style.opacity = '1';
         } else {
           glow.style.opacity = '0';
@@ -201,7 +223,7 @@ const InteractiveBackground = () => {
     window.addEventListener('resize', resize);
 
     if (reduceMotion) {
-      // Acessibilidade: sem animação — apenas um campo estático e elegante.
+      // Acessibilidade: sem animação — apenas o campo de fluxo estático.
       draw(0.6);
       return () => window.removeEventListener('resize', resize);
     }
@@ -226,12 +248,12 @@ const InteractiveBackground = () => {
       {/* Brilho suave da marca que acompanha o cursor (profundidade etérea). */}
       <div
         ref={glowRef}
-        className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-0 transition-opacity duration-700 ease-out"
-        style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.10), rgba(112,0,255,0.04) 45%, transparent 70%)' }}
+        className="absolute top-0 left-0 w-[560px] h-[560px] rounded-full blur-[120px] opacity-0 transition-opacity duration-700 ease-out"
+        style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.10), rgba(112,0,255,0.05) 45%, transparent 70%)' }}
       />
       {/* Vinheta + fade inferior para manter o texto sempre legível. */}
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 55%, #050505 100%)' }} />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505]" />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 50%, #050505 100%)' }} />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/35 via-transparent to-[#050505]" />
     </div>
   );
 };
