@@ -217,18 +217,12 @@ const InteractiveBackground = () => {
               const boost = (1 - mdist / CURSOR_RADIUS) ** 2;
               if (boost < 0.05) continue;
 
-              const grad = ctx.createLinearGradient(a.dx, a.dy, b.dx, c.dy);
-              grad.addColorStop(0, `rgba(0,240,255,${boost * 0.28})`);
-              grad.addColorStop(1, `rgba(150,90,255,${boost * 0.28})`);
-
               ctx.beginPath();
               ctx.moveTo(a.dx, a.dy);
               ctx.lineTo(b.dx, b.dy);
               ctx.lineTo(c.dx, c.dy);
               ctx.closePath();
-              ctx.fillStyle = grad;
-              ctx.fill();
-              ctx.strokeStyle = `rgba(120,220,255,${boost * 0.4})`;
+              ctx.strokeStyle = `rgba(120,220,255,${boost * 0.45})`;
               ctx.lineWidth = 0.6;
               ctx.stroke();
             }
