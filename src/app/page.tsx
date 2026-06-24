@@ -185,6 +185,57 @@ const InteractiveBackground = () => {
         }
       }
 
+      // Passo 1.5 — triângulos de ativação: perto do cursor, trios de partículas
+      // próximas entre si fecham faces translúcidas — a rede "pensa" em malhas,
+      // não só em linhas, exatamente onde o usuário está interagindo.
+      if (pointer.active) {
+        const near: typeof visible = [];
+        for (let i = 0; i < visible.length; i++) {
+          const v = visible[i];
+          const dx = v.dx - pointer.x;
+          const dy = v.dy - pointer.y;
+          if (dx * dx + dy * dy < CURSOR_RADIUS * CURSOR_RADIUS) near.push(v);
+        }
+
+        const TRIANGLE_LINK_DIST = LINK_DIST * 1.5; // mais generoso que as linhas — mais faces se formam
+
+        for (let i = 0; i < near.length; i++) {
+          for (let j = i + 1; j < near.length; j++) {
+            const ab = Math.hypot(near[i].dx - near[j].dx, near[i].dy - near[j].dy);
+            if (ab > TRIANGLE_LINK_DIST) continue;
+            for (let k = j + 1; k < near.length; k++) {
+              const a = near[i], b = near[j], c = near[k];
+              const bc = Math.hypot(b.dx - c.dx, b.dy - c.dy);
+              if (bc > TRIANGLE_LINK_DIST) continue;
+              const ca = Math.hypot(c.dx - a.dx, c.dy - a.dy);
+              if (ca > TRIANGLE_LINK_DIST) continue;
+
+              const cx = (a.dx + b.dx + c.dx) / 3;
+              const cy = (a.dy + b.dy + c.dy) / 3;
+              const mdist = Math.hypot(cx - pointer.x, cy - pointer.y);
+              if (mdist > CURSOR_RADIUS) continue;
+              const boost = (1 - mdist / CURSOR_RADIUS) ** 2;
+              if (boost < 0.05) continue;
+
+              const grad = ctx.createLinearGradient(a.dx, a.dy, b.dx, c.dy);
+              grad.addColorStop(0, `rgba(0,240,255,${boost * 0.28})`);
+              grad.addColorStop(1, `rgba(150,90,255,${boost * 0.28})`);
+
+              ctx.beginPath();
+              ctx.moveTo(a.dx, a.dy);
+              ctx.lineTo(b.dx, b.dy);
+              ctx.lineTo(c.dx, c.dy);
+              ctx.closePath();
+              ctx.fillStyle = grad;
+              ctx.fill();
+              ctx.strokeStyle = `rgba(120,220,255,${boost * 0.4})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
       // Passo 2 — as partículas em si: pontos vivos, mais brilhantes perto do cursor.
       for (let i = 0; i < visible.length; i++) {
         const v = visible[i];
