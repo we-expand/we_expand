@@ -412,7 +412,7 @@ export default function Home() {
           </div>
 
         </div>
-        <div className="max-w-[1440px] mx-auto flex justify-between items-center text-[11px] sm:text-xs text-white/20 font-space tracking-widest pt-8 border-t border-white/5">
+        <div className="max-w-[1440px] mx-auto flex justify-between items-center text-[9px] sm:text-xs text-white/20 font-space tracking-widest pt-8 border-t border-white/5">
           <span className="text-left">ELEVATING CORPORATE INTELLIGENCE.</span>
           <span className="text-right">© {new Date().getFullYear()} WE EXPAND. ALL RIGHTS RESERVED.</span>
         </div>
