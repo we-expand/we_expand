@@ -5,8 +5,18 @@ import { Cpu, Network, Workflow, ArrowUpRight, Diamond, CheckCircle, Send } from
 import { useRef, useState, useEffect } from 'react';
 
 // LOGOTIPO VETORIAL PURO (SEM FUNDO)
+// Ao passar o mouse, dá um "boing" elástico — spring com baixo damping faz o
+// próprio motor de física exagerar e voltar (efeito de elástico), em vez de um
+// scale/transition linear comum.
 const WeExpandLogo = () => (
-  <svg viewBox="26 24 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 md:w-12 md:h-12 group-hover:scale-105 transition-transform duration-700 ease-out">
+  <motion.svg
+    viewBox="26 24 76 76"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-12 h-12 md:w-12 md:h-12"
+    whileHover={{ scale: 1.22, rotate: [0, -8, 6, -3, 0] }}
+    transition={{ type: 'spring', stiffness: 320, damping: 7, mass: 0.6 }}
+  >
     <path d="M30 45L45 80L60 55L75 80L90 45" stroke="url(#line-grad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
     <circle cx="90" cy="45" r="4" fill="#00F0FF" className="animate-pulse" />
     <circle cx="60" cy="55" r="4" fill="#7000FF" />
@@ -17,7 +27,7 @@ const WeExpandLogo = () => (
         <stop offset="1" stopColor="#ffffff" stopOpacity="0.2" />
       </linearGradient>
     </defs>
-  </svg>
+  </motion.svg>
 );
 
 // ORGANISMO NEURAL — background interativo, full-screen, com cara de IA.
