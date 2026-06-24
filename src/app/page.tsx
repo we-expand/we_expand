@@ -80,10 +80,17 @@ const InteractiveBackground = () => {
       }
     };
 
+    // Altura total do site (não só o viewport) — o campo flutua por baixo de tudo.
+    const docHeight = () => Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight,
+      window.innerHeight
+    );
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
-      height = window.innerHeight;
+      height = docHeight();
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
@@ -97,13 +104,21 @@ const InteractiveBackground = () => {
     const fieldAngle = (x: number, y: number, t: number) =>
       (Math.sin(x * 0.0016 + t) + Math.cos(y * 0.0019 - t * 0.7) + Math.sin((x - y) * 0.001 + t * 1.1)) * 1.4;
 
-    const draw = (t: number) => {
+    const draw = (t: number, cull = true) => {
       ctx.clearRect(0, 0, width, height);
 
-      // Passo 1 — linhas de fluxo cobrindo a tela inteira (sempre visível, bem sutil).
+      // Só desenha o que está perto da janela visível — a página pode ser longa.
+      // Sem culling (modo estático/reduced-motion) para garantir que o campo
+      // inteiro fique pronto, já que não há novos frames para preencher o resto.
+      const viewTop = cull ? window.scrollY - 200 : -Infinity;
+      const viewBottom = cull ? window.scrollY + window.innerHeight + 200 : Infinity;
+
+      // Passo 1 — linhas de fluxo cobrindo a extensão inteira do site (sempre visível, bem sutil).
       ctx.beginPath();
       for (let i = 0; i < flowSeeds.length; i++) {
-        let { x, y } = flowSeeds[i];
+        const seed = flowSeeds[i];
+        if (seed.y < viewTop || seed.y > viewBottom) continue;
+        let { x, y } = seed;
         ctx.moveTo(x, y);
         for (let s = 0; s < FLOW_SEGMENTS; s++) {
           const a = fieldAngle(x, y, t);
@@ -205,16 +220,18 @@ const InteractiveBackground = () => {
       raf = requestAnimationFrame(loop);
     };
 
+    // Coordenadas em espaço de página (pageX/pageY) — o campo vive no documento
+    // inteiro e rola junto com o scroll, não fica preso ao viewport.
     const onMouseMove = (e: MouseEvent) => {
-      pointer.tx = e.clientX;
-      pointer.ty = e.clientY;
+      pointer.tx = e.pageX;
+      pointer.ty = e.pageY;
       pointer.active = true;
     };
     const onTouchMove = (e: TouchEvent) => {
       const tch = e.touches[0];
       if (!tch) return;
-      pointer.tx = tch.clientX;
-      pointer.ty = tch.clientY;
+      pointer.tx = tch.pageX;
+      pointer.ty = tch.pageY;
       pointer.active = true;
     };
     const onLeave = () => { pointer.active = false; };
@@ -222,10 +239,18 @@ const InteractiveBackground = () => {
     resize();
     window.addEventListener('resize', resize);
 
+    // O conteúdo (fontes, título aleatório do hero) pode alterar a altura do
+    // site após o primeiro paint — recalcula para o campo cobrir tudo certo.
+    const resizeObserver = new ResizeObserver(() => resize());
+    resizeObserver.observe(document.body);
+
     if (reduceMotion) {
-      // Acessibilidade: sem animação — apenas o campo de fluxo estático.
-      draw(0.6);
-      return () => window.removeEventListener('resize', resize);
+      // Acessibilidade: sem animação — apenas o campo de fluxo estático, completo.
+      draw(0.6, false);
+      return () => {
+        window.removeEventListener('resize', resize);
+        resizeObserver.disconnect();
+      };
     }
 
     window.addEventListener('mousemove', onMouseMove, { passive: true });
@@ -239,11 +264,14 @@ const InteractiveBackground = () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('mouseleave', onLeave);
+      resizeObserver.disconnect();
     };
   }, []);
 
   return (
-    <div aria-hidden className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-[#050505]">
+    // absolute (não fixed) — o campo acompanha a altura inteira do site e
+    // rola junto com o conteúdo, flutuando por baixo de tudo, não só no viewport.
+    <div aria-hidden className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-[#050505]">
       <canvas ref={canvasRef} className="absolute inset-0 block" />
       {/* Brilho suave da marca que acompanha o cursor (profundidade etérea). */}
       <div
@@ -439,7 +467,15 @@ export default function Home() {
       </section>
 
       {/* MANIFESTO + CLAREZA DO QUE ENTREGAMOS */}
-      <section className="relative z-10 py-32 px-8 bg-[#050505]/90 border-t border-white/5 backdrop-blur-xl">
+      <section className="relative z-10 py-32 px-8 bg-[#050505]/90 border-t border-white/5">
+        {/* Blur de transição suave — evita o corte abrupto da animação atrás. */}
+        <div
+          className="absolute inset-x-0 top-0 h-40 backdrop-blur-xl pointer-events-none"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black, transparent)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)',
+          }}
+        />
         <div className="max-w-4xl mx-auto text-center">
           <Diamond className="w-8 h-8 mx-auto mb-10 text-[#7000FF] opacity-50" />
           <h2 className="font-space text-3xl md:text-5xl font-light leading-tight mb-12">
