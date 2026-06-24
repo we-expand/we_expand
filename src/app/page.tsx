@@ -20,15 +20,15 @@ const WeExpandLogo = () => (
   </svg>
 );
 
-// CAMPO LATENTE — background interativo, full-screen, com cara de IA.
+// ORGANISMO NEURAL — background interativo, full-screen, com cara de IA.
 //
-// A tela toda é varrida por linhas de fluxo curvas e finíssimas — como as curvas
-// de nível de uma "loss landscape" (a superfície que um modelo desce durante o
-// treinamento). Elas se movem devagar em branco quase invisível, sempre, dando
-// sensação de computação contínua em segundo plano. Onde o usuário interage,
-// nasce um micro-grafo neural temporário: pontos próximos ao cursor se conectam
-// por linhas pulsantes em gradiente ciano→violeta (cores da marca), como
-// ativações se propagando entre neurônios. Renderizado em <canvas> para
+// Em vez de um campo único e uniforme, cada elemento é uma partícula independente
+// com a sua própria órbita: profundidade, velocidade, curvatura e cor próprias.
+// Elas vagueiam pela tela inteira o tempo todo (não só perto do cursor) e reagem
+// ao scroll com paralaxe — partículas "próximas" se movem mais rápido que a
+// página, as "distantes" ficam atrás, dando sensação real de profundidade. Perto
+// do cursor, as conexões entre elas brilham mais forte (ativação), mas a rede já
+// está viva e visível em qualquer ponto da tela. Renderizado em <canvas> para
 // performance; respeita prefers-reduced-motion e nunca bloqueia cliques.
 const InteractiveBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -42,45 +42,50 @@ const InteractiveBackground = () => {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const FLOW_SPACING = 64;   // espaçamento da grade de linhas de fluxo (px)
-    const FLOW_SEGMENTS = 7;    // segmentos por linha de fluxo (define a curvatura)
-    const FLOW_STEP = 11;       // comprimento de cada segmento (px)
-    const NODE_SPACING = 86;    // espaçamento da grade de nós do micro-grafo (px)
-    const RADIUS = 260;         // raio de ativação do micro-grafo ao redor do cursor (px)
-    const LINK_DIST = 130;      // distância máxima para ligar dois nós ativos
+    const AREA_PER_PARTICLE = 15000; // densidade: 1 partícula por N px² de tela
+    const PARTICLE_MIN = 70;
+    const PARTICLE_MAX = 230;
+    const LINK_DIST = 165;           // distância máxima para ligar duas partículas
+    const CURSOR_RADIUS = 280;       // raio de ativação extra ao redor do cursor
+
+    type Particle = {
+      x: number; y: number;       // posição real no documento (espaço de scroll)
+      depth: number;              // 0.5 (longe) .. 1.5 (perto) — controla tamanho/parallax/velocidade
+      angle: number;              // direção atual do deslocamento
+      turn: number;               // taxa de curvatura própria (cada partícula vira diferente)
+      wobblePhase: number;
+      speed: number;
+      size: number;
+      hue: 'cyan' | 'violet' | 'white';
+    };
 
     let width = 0;
     let height = 0;
-    let flowSeeds: { x: number; y: number }[] = [];
-    let nodes: { x: number; y: number }[] = [];
+    let particles: Particle[] = [];
 
     // Estado do ponteiro guardado fora do React para não re-renderizar por frame.
     const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false, seeded: false };
 
-    const buildGrids = () => {
-      flowSeeds = [];
-      const fc = Math.ceil(width / FLOW_SPACING) + 2;
-      const fr = Math.ceil(height / FLOW_SPACING) + 2;
-      for (let r = 0; r < fr; r++) {
-        for (let c = 0; c < fc; c++) {
-          flowSeeds.push({ x: c * FLOW_SPACING - FLOW_SPACING, y: r * FLOW_SPACING - FLOW_SPACING });
-        }
-      }
-
-      nodes = [];
-      const nc = Math.ceil(width / NODE_SPACING) + 2;
-      const nr = Math.ceil(height / NODE_SPACING) + 2;
-      for (let r = 0; r < nr; r++) {
-        for (let c = 0; c < nc; c++) {
-          // leve jitter para não parecer grade mecânica
-          const jx = (Math.sin(r * 12.9898 + c * 78.233) * 43758.5453 % 1) * NODE_SPACING * 0.3;
-          const jy = (Math.cos(r * 4.898 + c * 7.23) * 23421.631 % 1) * NODE_SPACING * 0.3;
-          nodes.push({ x: c * NODE_SPACING - NODE_SPACING + jx, y: r * NODE_SPACING - NODE_SPACING + jy });
-        }
-      }
+    const buildParticles = () => {
+      const count = Math.round(Math.min(PARTICLE_MAX, Math.max(PARTICLE_MIN, (width * height) / AREA_PER_PARTICLE)));
+      particles = Array.from({ length: count }, () => {
+        const depth = 0.5 + Math.random();
+        const hueRoll = Math.random();
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          depth,
+          angle: Math.random() * Math.PI * 2,
+          turn: (Math.random() - 0.5) * 0.018,
+          wobblePhase: Math.random() * Math.PI * 2,
+          speed: (0.12 + Math.random() * 0.22) * depth,
+          size: 0.9 + depth * 1.7,
+          hue: hueRoll < 0.3 ? 'cyan' : hueRoll < 0.55 ? 'violet' : 'white',
+        };
+      });
     };
 
-    // Altura total do site (não só o viewport) — o campo flutua por baixo de tudo.
+    // Altura total do site (não só o viewport) — o organismo flutua por baixo de tudo.
     const docHeight = () => Math.max(
       document.documentElement.scrollHeight,
       document.body.scrollHeight,
@@ -97,97 +102,107 @@ const InteractiveBackground = () => {
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.lineCap = 'round';
-      buildGrids();
+      buildParticles();
     };
 
-    // Campo de direção orgânico (ruído suave via senos sobrepostos).
-    const fieldAngle = (x: number, y: number, t: number) =>
-      (Math.sin(x * 0.0016 + t) + Math.cos(y * 0.0019 - t * 0.7) + Math.sin((x - y) * 0.001 + t * 1.1)) * 1.4;
+    const colorRGB = (hue: Particle['hue']) =>
+      hue === 'cyan' ? '0,240,255' : hue === 'violet' ? '150,90,255' : '255,255,255';
 
-    const draw = (t: number, cull = true) => {
+    const draw = (t: number, scrollY: number, animate: boolean) => {
       ctx.clearRect(0, 0, width, height);
 
-      // Só desenha o que está perto da janela visível — a página pode ser longa.
-      // Sem culling (modo estático/reduced-motion) para garantir que o campo
-      // inteiro fique pronto, já que não há novos frames para preencher o resto.
-      const viewTop = cull ? window.scrollY - 200 : -Infinity;
-      const viewBottom = cull ? window.scrollY + window.innerHeight + 200 : Infinity;
+      const viewTop = scrollY - 250;
+      const viewBottom = scrollY + window.innerHeight + 250;
 
-      // Passo 1 — linhas de fluxo cobrindo a extensão inteira do site (sempre visível, bem sutil).
-      ctx.beginPath();
-      for (let i = 0; i < flowSeeds.length; i++) {
-        const seed = flowSeeds[i];
-        if (seed.y < viewTop || seed.y > viewBottom) continue;
-        let { x, y } = seed;
-        ctx.moveTo(x, y);
-        for (let s = 0; s < FLOW_SEGMENTS; s++) {
-          const a = fieldAngle(x, y, t);
-          x += Math.cos(a) * FLOW_STEP;
-          y += Math.sin(a) * FLOW_STEP;
-          ctx.lineTo(x, y);
+      // Cada partícula vagueia com a própria curvatura — vida individual, não um
+      // campo compartilhado. O paralaxe (offset por profundidade) dá a sensação
+      // de que a cena reage ao movimento do site, não fica presa ao scroll 1:1.
+      const visible: { p: Particle; dx: number; dy: number; alpha: number; r: number }[] = [];
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        if (animate) {
+          p.angle += p.turn + Math.sin(t * 0.7 + p.wobblePhase) * 0.01;
+          p.x += Math.cos(p.angle) * p.speed;
+          p.y += Math.sin(p.angle) * p.speed * 0.75;
+
+          // wrap toroidal — a partícula nunca "acaba", sempre reaparece do outro lado
+          if (p.x < -40) p.x = width + 40;
+          if (p.x > width + 40) p.x = -40;
+          if (p.y < -40) p.y = height + 40;
+          if (p.y > height + 40) p.y = -40;
+        }
+
+        // paralaxe: partículas "perto" (depth alto) acompanham o scroll mais rápido
+        // que a página; "longe" (depth baixo) ficam atrás — sensação real de profundidade.
+        const parallax = (p.depth - 1) * 0.22 * scrollY;
+        const drawY = p.y + parallax;
+
+        if (drawY < viewTop || drawY > viewBottom) continue;
+
+        visible.push({ p, dx: p.x, dy: drawY, alpha: 0.16 + p.depth * 0.16, r: p.size });
+      }
+
+      // Passo 1 — conexões ambientes entre partículas próximas (sempre presentes,
+      // não dependem do cursor — a rede já está viva por toda a tela).
+      for (let i = 0; i < visible.length; i++) {
+        for (let j = i + 1; j < visible.length; j++) {
+          const a = visible[i];
+          const b = visible[j];
+          const dx = a.dx - b.dx;
+          const dy = a.dy - b.dy;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > LINK_DIST) continue;
+
+          let boost = 0;
+          if (pointer.active) {
+            const mdx = (a.dx + b.dx) / 2 - pointer.x;
+            const mdy = (a.dy + b.dy) / 2 - pointer.y;
+            const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+            if (mdist < CURSOR_RADIUS) boost = (1 - mdist / CURSOR_RADIUS) ** 2;
+          }
+
+          const base = (1 - dist / LINK_DIST) * 0.05;
+          const k = base + boost * 0.5;
+          if (k < 0.012) continue;
+
+          if (boost > 0.05) {
+            const grad = ctx.createLinearGradient(a.dx, a.dy, b.dx, b.dy);
+            grad.addColorStop(0, `rgba(0,240,255,${k})`);
+            grad.addColorStop(1, `rgba(150,90,255,${k})`);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 0.7 + boost * 1.1;
+          } else {
+            ctx.strokeStyle = `rgba(255,255,255,${k})`;
+            ctx.lineWidth = 0.7;
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(a.dx, a.dy);
+          ctx.lineTo(b.dx, b.dy);
+          ctx.stroke();
         }
       }
-      ctx.strokeStyle = 'rgba(255,255,255,0.045)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
 
-      // Passo 2 — micro-grafo neural local: ativa nós próximos ao cursor.
-      if (pointer.active) {
-        const px = pointer.x;
-        const py = pointer.y;
-        const active: { x: number; y: number; inf: number }[] = [];
-
-        for (let i = 0; i < nodes.length; i++) {
-          const n = nodes[i];
-          const dx = px - n.x;
-          const dy = py - n.y;
+      // Passo 2 — as partículas em si: pontos vivos, mais brilhantes perto do cursor.
+      for (let i = 0; i < visible.length; i++) {
+        const v = visible[i];
+        let boost = 0;
+        if (pointer.active) {
+          const dx = v.dx - pointer.x;
+          const dy = v.dy - pointer.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < RADIUS) {
-            let inf = 1 - dist / RADIUS;
-            inf *= inf;
-            active.push({ x: n.x, y: n.y, inf });
-          }
+          if (dist < CURSOR_RADIUS) boost = (1 - dist / CURSOR_RADIUS) ** 2;
         }
+        const pulse = 0.85 + 0.15 * Math.sin(t * 2.2 + v.dx * 0.01);
+        const alpha = (v.alpha + boost * 0.6) * pulse;
+        const radius = v.r + boost * 2.2;
 
-        // Ligações entre nós ativos próximos — pulso de ativação.
-        for (let i = 0; i < active.length; i++) {
-          for (let j = i + 1; j < active.length; j++) {
-            const a = active[i];
-            const b = active[j];
-            const dx = a.x - b.x;
-            const dy = a.y - b.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < LINK_DIST) {
-              const strength = (a.inf + b.inf) * 0.5 * (1 - dist / LINK_DIST);
-              if (strength < 0.04) continue;
-              const pulse = 0.65 + 0.35 * Math.sin(t * 3 + (a.x + b.x) * 0.02);
-              const k = strength * pulse;
-
-              const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-              grad.addColorStop(0, `rgba(0,240,255,${k * 0.8})`);
-              grad.addColorStop(1, `rgba(112,0,255,${k * 0.8})`);
-
-              ctx.beginPath();
-              ctx.strokeStyle = grad;
-              ctx.lineWidth = 0.8 + k * 1.2;
-              ctx.moveTo(a.x, a.y);
-              ctx.lineTo(b.x, b.y);
-              ctx.stroke();
-            }
-          }
-        }
-
-        // Nós luminosos.
-        for (let i = 0; i < active.length; i++) {
-          const n = active[i];
-          if (n.inf < 0.12) continue;
-          const pulse = 0.7 + 0.3 * Math.sin(t * 4 + n.x * 0.05);
-          const r = 1.2 + n.inf * 2.2;
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(${n.inf > 0.55 ? '0,240,255' : '170,120,255'},${n.inf * 0.75 * pulse})`;
-          ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${colorRGB(v.p.hue)},${Math.min(alpha, 0.95)})`;
+        ctx.arc(v.dx, v.dy, radius, 0, Math.PI * 2);
+        ctx.fill();
       }
     };
 
@@ -195,7 +210,7 @@ const InteractiveBackground = () => {
     let time = 0;
 
     const loop = () => {
-      time += 0.0045;
+      time += 0.012;
 
       // Cursor com inércia (movimento sedoso, não mecânico).
       if (!pointer.seeded && pointer.tx > -9000) {
@@ -216,12 +231,12 @@ const InteractiveBackground = () => {
         }
       }
 
-      draw(time);
+      draw(time, window.scrollY, true);
       raf = requestAnimationFrame(loop);
     };
 
-    // Coordenadas em espaço de página (pageX/pageY) — o campo vive no documento
-    // inteiro e rola junto com o scroll, não fica preso ao viewport.
+    // Coordenadas em espaço de página (pageX/pageY) — a rede vive no documento
+    // inteiro e rola junto com o scroll, não fica presa ao viewport.
     const onMouseMove = (e: MouseEvent) => {
       pointer.tx = e.pageX;
       pointer.ty = e.pageY;
@@ -240,13 +255,13 @@ const InteractiveBackground = () => {
     window.addEventListener('resize', resize);
 
     // O conteúdo (fontes, título aleatório do hero) pode alterar a altura do
-    // site após o primeiro paint — recalcula para o campo cobrir tudo certo.
+    // site após o primeiro paint — recalcula para a rede cobrir tudo certo.
     const resizeObserver = new ResizeObserver(() => resize());
     resizeObserver.observe(document.body);
 
     if (reduceMotion) {
-      // Acessibilidade: sem animação — apenas o campo de fluxo estático, completo.
-      draw(0.6, false);
+      // Acessibilidade: sem animação — apenas a rede estática, completa.
+      draw(0.6, window.scrollY, false);
       return () => {
         window.removeEventListener('resize', resize);
         resizeObserver.disconnect();
