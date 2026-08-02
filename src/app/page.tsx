@@ -479,7 +479,7 @@ export default function Home() {
       <div className="fixed top-0 inset-x-0 z-[60] bg-black border-b border-white/10 px-8">
         <div className="max-w-[1440px] mx-auto h-9 flex items-center justify-center">
           <a
-            href="tel:+5511925651315"
+            href="tel:+5511925721315"
             className="flex items-center gap-2 font-space font-bold text-[11px] sm:text-xs tracking-wider text-white/90 hover:text-[#00F0FF] transition-colors"
           >
             <span className="relative flex h-2 w-2 shrink-0">
@@ -487,7 +487,7 @@ export default function Home() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F0FF]" />
             </span>
             <Phone className="w-3.5 h-3.5 shrink-0" />
-            +55 11 92565-1315
+            +55 11 92572-1315
           </a>
         </div>
       </div>
