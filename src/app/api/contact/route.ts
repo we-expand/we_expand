@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const { name, email, company, message } = await request.json();
 
     const { data, error } = await resend.emails.send({
-      from: 'We Expand <info@we-expand.com>',
+      from: 'We Expand Intel <onboarding@resend.dev>',
       to: [email],
       subject: `🔥 Novo Mapeamento Operacional: ${company}`,
       html: `
