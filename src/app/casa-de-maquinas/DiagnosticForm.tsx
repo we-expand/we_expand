@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { AREA } from './area';
 
-const field = 'w-full bg-transparent border-b border-white/15 py-3 text-base font-light placeholder:text-white/25 focus:outline-none focus:border-[#00F0FF] transition-colors';
+const field = 'w-full bg-transparent border-b border-white/15 py-3 text-base font-light placeholder:text-white/25 focus:outline-none focus:border-[#B08D57] transition-colors';
 const label = 'font-space text-[10px] font-bold uppercase tracking-[0.25em] text-white/40';
 
 export default function DiagnosticForm() {
@@ -61,7 +61,7 @@ export default function DiagnosticForm() {
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="px-8 py-4 rounded-full bg-white text-black font-space text-xs font-bold uppercase tracking-widest hover:bg-[#00F0FF] transition-colors disabled:opacity-50 cursor-pointer"
+          className="px-8 py-4 rounded-full bg-white text-black font-space text-xs font-bold uppercase tracking-widest hover:bg-[#B08D57] transition-colors disabled:opacity-50 cursor-pointer"
         >
           {status === 'sending' ? 'Enviando' : 'Pedir diagnóstico'}
         </button>

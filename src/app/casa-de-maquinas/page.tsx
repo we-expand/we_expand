@@ -26,15 +26,15 @@ const eyebrow = 'font-space text-[11px] font-bold uppercase tracking-[0.3em]';
 
 export default function AreaPage() {
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <header className="fixed top-0 inset-x-0 z-50 border-b border-white/5 bg-[#050505]/70 backdrop-blur-2xl px-6 md:px-8">
+    <main className="min-h-screen bg-[#141414] text-white">
+      <header className="fixed top-0 inset-x-0 z-50 border-b border-white/5 bg-[#141414]/70 backdrop-blur-2xl px-6 md:px-8">
         <div className="max-w-[1200px] mx-auto h-20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 font-space text-sm md:text-base tracking-tight whitespace-nowrap">
             <Link href="/" className="font-bold text-white/40 hover:text-white transition-colors">We<span className="font-bold">Expand</span></Link>
             <span className="w-4 h-px bg-white/20" aria-hidden />
             <span className="font-bold">{AREA.name}</span>
           </div>
-          <a href="#diagnostico" className={`${eyebrow} text-white/60 hover:text-[#00F0FF] transition-colors whitespace-nowrap`}>
+          <a href="#diagnostico" className={`${eyebrow} text-white/60 hover:text-[#B08D57] transition-colors whitespace-nowrap`}>
             Diagnóstico
           </a>
         </div>
@@ -43,15 +43,15 @@ export default function AreaPage() {
       {/* HERO: só tipografia. A marca é a própria ideia de não aparecer. */}
       <section className="px-6 md:px-8 pt-48 pb-32 md:pt-60 md:pb-44">
         <div className="max-w-[1200px] mx-auto">
-          <p className={`${eyebrow} text-[#00F0FF] mb-10`}>Uma operação We Expand</p>
-          <h1 className="font-space font-bold tracking-tighter leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[7.5rem]">
+          <p className={`${eyebrow} text-[#B08D57] mb-10`}>Uma operação We Expand</p>
+          <h1 className="font-space font-bold tracking-tighter leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem]">
             {AREA.tagline[0]}
             <br />
             <span className="text-white/25">{AREA.tagline[1]}</span>
           </h1>
           <p className="mt-12 max-w-xl text-lg md:text-xl font-light leading-relaxed text-white/55">
             Sites, identidade visual, presença no Google, conteúdo e mini-apps para negócios que valorizam a própria marca.
-            Acabamento de agência, operado nos bastidores.
+            Nada aparece. Tudo funciona.
           </p>
         </div>
       </section>
@@ -77,7 +77,7 @@ export default function AreaPage() {
           <div className="grid md:grid-cols-3 gap-12">
             {STEPS.map((s, i) => (
               <div key={s.title}>
-                <span className="block w-8 h-px bg-[#00F0FF] mb-8" aria-hidden />
+                <span className="block w-8 h-px bg-[#B08D57] mb-8" aria-hidden />
                 <h3 className="font-space text-xl font-bold tracking-tight mb-4">
                   <span className="text-white/30 mr-3 tabular-nums">{i + 1}</span>{s.title}
                 </h3>
@@ -91,7 +91,7 @@ export default function AreaPage() {
       <section id="diagnostico" className="px-6 md:px-8 py-28 md:py-40 border-t border-white/5">
         <div className="max-w-[1200px] mx-auto grid lg:grid-cols-2 gap-16 items-start">
           <div>
-            <p className={`${eyebrow} text-[#00F0FF] mb-8`}>Diagnóstico gratuito</p>
+            <p className={`${eyebrow} text-[#B08D57] mb-8`}>Diagnóstico gratuito</p>
             <h2 className="font-space text-4xl md:text-6xl font-bold tracking-tighter leading-[1.05]">
               Comece pelo que<br />ninguém te mostrou.
             </h2>
