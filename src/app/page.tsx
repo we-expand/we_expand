@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, AnimatePresence, type Variants } from 
 import { Cpu, Network, Workflow, ArrowUpRight, Diamond, CheckCircle, Send, Phone } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { AREA } from './casa-de-maquinas/area';
+import { AREA } from './casa_de_maquinas/area';
 
 // LOGOTIPO VETORIAL PURO (SEM FUNDO)
 // Ao passar o mouse, o logo "abre e fecha" como um elástico: squash-and-stretch
