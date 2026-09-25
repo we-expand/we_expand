@@ -1,19 +1,20 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { motion, type Variants } from 'framer-motion';
+import { ArrowUpRight, Globe, Palette, MapPin, Layers, Smartphone } from 'lucide-react';
 import Link from 'next/link';
 import { AREA } from './area';
 import DiagnosticForm from './DiagnosticForm';
+import { AreaLockup, InteractiveBackground } from '../brand';
 
-export const metadata: Metadata = {
-  title: `${AREA.name} · We Expand`,
-  description: 'Sites, identidade visual, presença no Google, conteúdo e mini-apps para negócios locais de alto padrão. Uma operação We Expand.',
-};
+const GLOW = '#00F0FF';
 
 const OFFERS = [
-  { title: 'Sites', desc: 'Site institucional ou landing page com direção de arte própria, domínio e hospedagem inclusos.' },
-  { title: 'Identidade visual', desc: 'Logo, paleta, tipografia, papelaria e manual de marca. O sistema que dá coerência a tudo o que vem depois.' },
-  { title: 'Presença local', desc: 'Perfil do Google otimizado, SEO local, publicações semanais e relatório mensal de resultado.' },
-  { title: 'Conteúdo', desc: 'Posts e stories prontos todo mês, com legendas e calendário, no padrão visual da sua marca.' },
-  { title: 'Mini-apps', desc: 'Agendamento online, cardápio digital, catálogo com pedido pelo WhatsApp, área do cliente.' },
+  { icon: Globe, title: 'Sites', desc: 'Site institucional ou landing page com direção de arte própria, domínio e hospedagem inclusos.' },
+  { icon: Palette, title: 'Identidade visual', desc: 'Logo, paleta, tipografia, papelaria e manual de marca. O sistema que dá coerência a tudo o que vem depois.' },
+  { icon: MapPin, title: 'Presença local', desc: 'Perfil do Google otimizado, SEO local, publicações semanais e relatório mensal de resultado.' },
+  { icon: Layers, title: 'Conteúdo', desc: 'Posts e stories prontos todo mês, com legendas e calendário, no padrão visual da sua marca.' },
+  { icon: Smartphone, title: 'Mini-apps', desc: 'Agendamento online, cardápio digital, catálogo com pedido pelo WhatsApp, área do cliente.' },
 ];
 
 const STEPS = [
@@ -24,86 +25,187 @@ const STEPS = [
 
 const eyebrow = 'font-space text-[11px] font-bold uppercase tracking-[0.3em]';
 
+const ease = [0.16, 1, 0.3, 1] as const;
+
+const lineContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.2 } },
+};
+
+const word: Variants = {
+  hidden: { opacity: 0, y: 36, filter: 'blur(8px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.9, ease },
+  },
+};
+
+const HeroLine = ({ text, className }: { text: string; className?: string }) => (
+  <span>
+    {text.split(' ').map((w, i) => (
+      <motion.span key={i} variants={word} className={`inline-block mr-[0.25em] last:mr-0 ${className ?? ''}`}>
+        {w}
+      </motion.span>
+    ))}
+  </span>
+);
+
 export default function AreaPage() {
   return (
-    <main className="min-h-screen bg-[#141414] text-white">
-      <header className="fixed top-0 inset-x-0 z-50 border-b border-white/5 bg-[#141414]/70 backdrop-blur-2xl px-6 md:px-8">
+    <main className="relative min-h-screen bg-[#050505] text-white overflow-hidden">
+      <InteractiveBackground />
+
+      <header className="fixed top-0 inset-x-0 z-50 border-b border-white/5 bg-[#050505]/50 backdrop-blur-2xl px-6 md:px-8">
         <div className="max-w-[1200px] mx-auto h-20 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 font-space text-sm md:text-base tracking-tight whitespace-nowrap">
-            <Link href="/" className="font-bold text-white/40 hover:text-white transition-colors">We<span className="font-bold">Expand</span></Link>
-            <span className="w-4 h-px bg-white/20" aria-hidden />
-            <span className="font-bold">{AREA.name}</span>
-          </div>
-          <a href="#diagnostico" className={`${eyebrow} text-white/60 hover:text-[#B08D57] transition-colors whitespace-nowrap`}>
-            Diagnóstico
+          <Link href="/" aria-label="Voltar para a WeExpand">
+            <AreaLockup areaName={AREA.name} size="sm" />
+          </Link>
+          <a
+            href="#diagnostico"
+            className="relative px-5 md:px-7 py-2.5 md:py-3 bg-white text-black font-space font-bold uppercase text-[10px] md:text-xs tracking-widest rounded-full overflow-hidden group inline-block text-center cursor-pointer shrink-0 whitespace-nowrap"
+          >
+            <span className="relative z-10 group-hover:text-white transition-colors duration-500">Diagnóstico grátis</span>
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#00F0FF] to-[#7000FF] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
           </a>
         </div>
       </header>
 
-      {/* HERO: só tipografia. A marca é a própria ideia de não aparecer. */}
-      <section className="px-6 md:px-8 pt-48 pb-32 md:pt-60 md:pb-44">
+      {/* HERO */}
+      <section className="relative z-10 px-6 md:px-8 pt-48 pb-32 md:pt-60 md:pb-44">
         <div className="max-w-[1200px] mx-auto">
-          <p className={`${eyebrow} text-[#B08D57] mb-10`}>Uma operação We Expand</p>
-          <h1 className="font-space font-bold tracking-tighter leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem]">
-            {AREA.tagline[0]}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease }}
+            className="flex items-center gap-3 mb-10"
+          >
+            <span className="w-12 h-[1px]" style={{ background: GLOW }} />
+            <span className={`${eyebrow}`} style={{ color: GLOW }}>Uma operação We Expand</span>
+          </motion.div>
+
+          <motion.h1
+            initial="hidden"
+            animate="visible"
+            variants={lineContainer}
+            className="font-space font-bold tracking-tighter leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem]"
+          >
+            <HeroLine text={AREA.tagline[0]} />
             <br />
-            <span className="text-white/25">{AREA.tagline[1]}</span>
-          </h1>
-          <p className="mt-12 max-w-xl text-lg md:text-xl font-light leading-relaxed text-white/55">
+            <HeroLine
+              text={AREA.tagline[1]}
+              className="text-transparent bg-clip-text bg-gradient-to-r from-white/70 to-white/20"
+            />
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.5, ease }}
+            className="mt-12 max-w-xl text-lg md:text-xl font-light leading-relaxed text-white/55"
+          >
             Sites, identidade visual, presença no Google, conteúdo e mini-apps para negócios que valorizam a própria marca.
             Nada aparece. Tudo funciona.
-          </p>
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.7, ease }}
+            className="mt-12"
+          >
+            <a href="#diagnostico" className="relative px-8 py-4 bg-white text-black font-space font-bold uppercase text-xs tracking-widest rounded-full overflow-hidden group inline-flex items-center gap-2 cursor-pointer">
+              <span className="relative z-10 group-hover:text-white transition-colors duration-500">Pedir diagnóstico gratuito</span>
+              <ArrowUpRight className="relative z-10 w-4 h-4 group-hover:text-white group-hover:rotate-45 transition-all duration-500" />
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#00F0FF] to-[#7000FF] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
+            </a>
+          </motion.div>
         </div>
       </section>
 
-      <section className="px-6 md:px-8 py-28 border-t border-white/5">
+      {/* O QUE FAZEMOS */}
+      <section className="relative z-10 px-6 md:px-8 py-28 border-t border-white/5 bg-[#050505]/80 backdrop-blur-sm">
         <div className="max-w-[1200px] mx-auto grid lg:grid-cols-[1fr_2fr] gap-16">
           <p className={`${eyebrow} text-white/40`}>O que fazemos</p>
           <ol>
-            {OFFERS.map((o, i) => (
-              <li key={o.title} className="grid grid-cols-[3rem_1fr] md:grid-cols-[4rem_14rem_1fr] gap-x-6 gap-y-2 py-8 border-t border-white/10 first:border-t-0 first:pt-0">
-                <span className="font-space text-sm text-white/30 tabular-nums pt-1">{String(i + 1).padStart(2, '0')}</span>
-                <h2 className="font-space text-2xl font-bold tracking-tight">{o.title}</h2>
-                <p className="col-start-2 md:col-start-3 text-white/50 font-light leading-relaxed">{o.desc}</p>
-              </li>
-            ))}
+            {OFFERS.map((o, i) => {
+              const Icon = o.icon;
+              return (
+                <motion.li
+                  key={o.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.7, delay: i * 0.08, ease }}
+                  className="group grid grid-cols-1 md:grid-cols-[14rem_1fr] gap-x-6 gap-y-2 py-8 border-t border-white/10 first:border-t-0 first:pt-0"
+                >
+                  <h2 className="font-space text-2xl font-bold tracking-tight flex items-center gap-3">
+                    <Icon className="w-5 h-5 text-[#00F0FF] opacity-70 group-hover:opacity-100 transition-opacity" />
+                    {o.title}
+                  </h2>
+                  <p className="text-white/50 font-light leading-relaxed">{o.desc}</p>
+                </motion.li>
+              );
+            })}
           </ol>
         </div>
       </section>
 
-      <section className="px-6 md:px-8 py-28 border-t border-white/5">
+      {/* COMO FUNCIONA */}
+      <section className="relative z-10 px-6 md:px-8 py-28 border-t border-white/5">
         <div className="max-w-[1200px] mx-auto grid lg:grid-cols-[1fr_2fr] gap-16">
           <p className={`${eyebrow} text-white/40`}>Como funciona</p>
           <div className="grid md:grid-cols-3 gap-12">
             {STEPS.map((s, i) => (
-              <div key={s.title}>
-                <span className="block w-8 h-px bg-[#B08D57] mb-8" aria-hidden />
+              <motion.div
+                key={s.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.7, delay: i * 0.12, ease }}
+              >
+                <span className="block w-8 h-px mb-8" style={{ background: GLOW }} aria-hidden />
                 <h3 className="font-space text-xl font-bold tracking-tight mb-4">
                   <span className="text-white/30 mr-3 tabular-nums">{i + 1}</span>{s.title}
                 </h3>
                 <p className="text-white/50 font-light leading-relaxed">{s.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="diagnostico" className="px-6 md:px-8 py-28 md:py-40 border-t border-white/5">
+      {/* DIAGNÓSTICO */}
+      <section id="diagnostico" className="relative z-10 px-6 md:px-8 py-28 md:py-40 border-t border-white/5 bg-[#050505]/80 backdrop-blur-sm">
         <div className="max-w-[1200px] mx-auto grid lg:grid-cols-2 gap-16 items-start">
-          <div>
-            <p className={`${eyebrow} text-[#B08D57] mb-8`}>Diagnóstico gratuito</p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.8, ease }}
+          >
+            <p className={`${eyebrow} mb-8`} style={{ color: GLOW }}>Diagnóstico gratuito</p>
             <h2 className="font-space text-4xl md:text-6xl font-bold tracking-tighter leading-[1.05]">
               Comece pelo que<br />ninguém te mostrou.
             </h2>
             <p className="mt-8 max-w-md text-white/50 font-light leading-relaxed">
               Conte sobre o seu negócio. Devolvemos uma leitura franca da sua presença digital e o próximo passo que mais gera retorno.
             </p>
-          </div>
-          <DiagnosticForm />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.8, delay: 0.15, ease }}
+            className="bg-white/[0.01] border border-white/5 p-8 md:p-10 rounded-3xl backdrop-blur-md"
+          >
+            <DiagnosticForm />
+          </motion.div>
         </div>
       </section>
 
-      <footer className="px-6 md:px-8 py-10 border-t border-white/5">
+      <footer className="relative z-10 px-6 md:px-8 py-10 border-t border-white/5">
         <div className="max-w-[1200px] mx-auto flex justify-between gap-4 font-space text-[10px] sm:text-xs tracking-widest uppercase text-white/25">
           <span>{AREA.name} · We Expand</span>
           <span>© {new Date().getFullYear()}</span>
