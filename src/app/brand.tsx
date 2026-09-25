@@ -33,15 +33,15 @@ export const WeExpandLogo = ({ className = 'w-12 h-12 md:w-12 md:h-12' }: { clas
   </motion.svg>
 );
 
-// Lockup da área: mesma marca WeExpand + divisor + nome da operação em
-// gradiente cyan→violeta (mesmo par usado no glow do hero e nos CTAs), para
-// ler como parte da mesma casa, não uma marca à parte.
+// Lockup da área: mesma marca WeExpand (W pequeno) + nome da operação em
+// branco, maior e mais forte que o "WeExpand" — mesmo padrão do avatar das
+// redes: o W é a assinatura discreta, "Casa de Máquinas" é o que se lê.
 export const AreaLockup = ({ areaName, size = 'md' }: { areaName: string; size?: 'sm' | 'md' }) => (
-  <div className={`flex items-center gap-3 md:gap-4 font-space font-bold tracking-tighter whitespace-nowrap ${size === 'sm' ? 'text-sm md:text-base' : 'text-lg md:text-2xl'}`}>
-    <WeExpandLogo className={size === 'sm' ? 'w-8 h-8' : 'w-10 h-10 md:w-12 md:h-12'} />
-    <span className="text-white">We<span className="text-white/40">Expand</span></span>
+  <div className={`flex items-center gap-3 md:gap-3.5 font-space font-bold tracking-tighter whitespace-nowrap ${size === 'sm' ? 'text-base md:text-lg' : 'text-xl md:text-3xl'}`}>
+    <WeExpandLogo className={size === 'sm' ? 'w-9 h-9' : 'w-11 h-11 md:w-12 md:h-12'} />
+    <span className="text-white/30 font-normal text-[0.7em]">We<span className="text-white/20">Expand</span></span>
     <span className="w-px h-4 md:h-5 bg-white/15" aria-hidden />
-    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#7000FF]">{areaName}</span>
+    <span className="text-white text-[1.15em]">{areaName}</span>
   </div>
 );
 
