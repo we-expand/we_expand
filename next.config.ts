@@ -4,8 +4,11 @@ const nextConfig: NextConfig = {
   // Grafias alternativas da área Casa de Máquinas levam ao endereço oficial.
   async redirects() {
     return [
-      { source: '/casa-de-maquinas', destination: '/casa_de_maquinas', permanent: true },
-      { source: '/casa_maquinas', destination: '/casa_de_maquinas', permanent: true },
+      ...['/casa-de-maquinas', '/casa_de_maquinas', '/casa_maquinas'].map(source => ({
+        source,
+        destination: '/casademaquinas',
+        permanent: true,
+      })),
     ];
   },
 };
