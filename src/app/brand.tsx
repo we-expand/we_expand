@@ -37,8 +37,8 @@ export const WeExpandLogo = ({ className = 'w-12 h-12 md:w-12 md:h-12' }: { clas
 // branco, maior e mais forte que o "WeExpand" — mesmo padrão do avatar das
 // redes: o W é a assinatura discreta, "Casa de Máquinas" é o que se lê.
 export const AreaLockup = ({ areaName, size = 'md' }: { areaName: string; size?: 'sm' | 'md' }) => (
-  <div className={`flex items-center gap-2.5 md:gap-3 font-space font-bold tracking-tighter whitespace-nowrap ${size === 'sm' ? 'text-sm md:text-base' : 'text-lg md:text-2xl'}`}>
-    <WeExpandLogo className={size === 'sm' ? 'w-7 h-7' : 'w-9 h-9 md:w-10 md:h-10'} />
+  <div className={`flex items-center gap-3 md:gap-3.5 font-space font-bold tracking-tighter whitespace-nowrap ${size === 'sm' ? 'text-base md:text-lg' : 'text-xl md:text-3xl'}`}>
+    <WeExpandLogo className={size === 'sm' ? 'w-9 h-9' : 'w-11 h-11 md:w-12 md:h-12'} />
     <span className="text-white/30 font-normal text-[0.7em]">We<span className="text-white/20">Expand</span></span>
     <span className="w-px h-4 md:h-5 bg-white/15" aria-hidden />
     <span className="text-white text-[1.15em]">{areaName}</span>
