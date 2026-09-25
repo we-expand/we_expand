@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { AREA } from './area';
 import DiagnosticForm from './DiagnosticForm';
 import { AreaLockup, InteractiveBackground } from '../brand';
+import { ProjectsSection } from '../projects';
 
 const GLOW = '#00F0FF';
 
@@ -175,6 +176,8 @@ export default function AreaPage() {
           </div>
         </div>
       </section>
+
+      <ProjectsSection accent={GLOW} />
 
       {/* DIAGNÓSTICO */}
       <section id="diagnostico" className="relative z-10 px-6 md:px-8 py-28 md:py-40 border-t border-white/5 bg-[#050505]/80 backdrop-blur-sm">
