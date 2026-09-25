@@ -217,7 +217,7 @@ const OfferCard = ({ index, title, desc }: { index: number; title: string; desc:
       >
         <motion.div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: glow }} />
         <div className="relative" style={{ transform: 'translateZ(30px)' }}>
-          <span className="font-space text-xs text-[#00F0FF]/70 tabular-nums tracking-widest">{String(index + 1).padStart(2, '0')}</span>
+          <span className="block w-8 h-[1px] bg-[#00F0FF]/70" />
           <h3 className="font-space text-2xl font-bold mt-10 mb-4">{title}</h3>
           <p className="text-white/50 leading-relaxed font-light text-sm">{desc}</p>
         </div>
