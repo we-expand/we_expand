@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { AREA } from './casademaquinas/area';
 import { WeExpandLogo, InteractiveBackground } from './brand';
+import { ProjectsSection } from './projects';
 
 // ROTATING HERO HEADLINES — one is randomly picked per visit, each tied to what We Expand does.
 // Glow always matches the brand cyan used in the "Consultoria & Engenharia de IA" tag — no color variation.
@@ -149,6 +150,7 @@ export default function Home() {
           <nav className="hidden md:flex gap-12 font-space text-xs font-semibold tracking-[0.2em] uppercase text-white/50">
             <a href="#vision" className="hover:text-[#00F0FF] transition-colors">The Vision</a>
             <a href="#expertise" className="hover:text-[#00F0FF] transition-colors">Soluções</a>
+            <a href="#projetos" className="hover:text-[#00F0FF] transition-colors">Projetos</a>
             {/* Área própria, apartada das seções da home por um fio vertical. */}
             <span className="w-px h-4 self-center bg-white/15" aria-hidden />
             <Link href={AREA.href} className="text-white hover:text-[#00F0FF] transition-colors">{AREA.name}</Link>
@@ -265,6 +267,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ProjectsSection accent="#7000FF" />
 
       {/* FOOTER CORPORATIVO COM FORMULÁRIO DE VANGUARDA */}
       <footer id="contact" className="relative z-10 bg-black pt-32 pb-12 px-8 border-t border-white/10">
