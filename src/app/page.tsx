@@ -3,6 +3,8 @@
 import { motion, useScroll, useTransform, AnimatePresence, type Variants } from 'framer-motion';
 import { Cpu, Network, Workflow, ArrowUpRight, Diamond, CheckCircle, Send, Phone } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
+import Link from 'next/link';
+import { AREA } from './casademaquinas/area';
 
 // LOGOTIPO VETORIAL PURO (SEM FUNDO)
 // Ao passar o mouse, o logo "abre e fecha" como um elástico: squash-and-stretch
@@ -502,6 +504,9 @@ export default function Home() {
           <nav className="hidden md:flex gap-12 font-space text-xs font-semibold tracking-[0.2em] uppercase text-white/50">
             <a href="#vision" className="hover:text-[#00F0FF] transition-colors">The Vision</a>
             <a href="#expertise" className="hover:text-[#00F0FF] transition-colors">Soluções</a>
+            {/* Área própria, apartada das seções da home por um fio vertical. */}
+            <span className="w-px h-4 self-center bg-white/15" aria-hidden />
+            <Link href={AREA.href} className="text-white hover:text-[#00F0FF] transition-colors">{AREA.name}</Link>
           </nav>
           <a href="#contact" className="relative px-4 md:px-8 py-2 md:py-3 bg-white text-black font-space font-bold uppercase text-[10px] md:text-xs tracking-wide md:tracking-widest rounded-full overflow-hidden group inline-block text-center cursor-pointer shrink-0 whitespace-nowrap">
             <span className="relative z-10 group-hover:text-white transition-colors duration-500">Contact Us</span>
