@@ -138,14 +138,13 @@ export default function AreaPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-80px' }}
                   transition={{ duration: 0.7, delay: i * 0.08, ease }}
-                  className="group grid grid-cols-[3rem_1fr] md:grid-cols-[4rem_14rem_1fr] gap-x-6 gap-y-2 py-8 border-t border-white/10 first:border-t-0 first:pt-0"
+                  className="group grid grid-cols-1 md:grid-cols-[14rem_1fr] gap-x-6 gap-y-2 py-8 border-t border-white/10 first:border-t-0 first:pt-0"
                 >
-                  <span className="font-space text-sm text-white/30 tabular-nums pt-1">{String(i + 1).padStart(2, '0')}</span>
                   <h2 className="font-space text-2xl font-bold tracking-tight flex items-center gap-3">
                     <Icon className="w-5 h-5 text-[#00F0FF] opacity-70 group-hover:opacity-100 transition-opacity" />
                     {o.title}
                   </h2>
-                  <p className="col-start-2 md:col-start-3 text-white/50 font-light leading-relaxed">{o.desc}</p>
+                  <p className="text-white/50 font-light leading-relaxed">{o.desc}</p>
                 </motion.li>
               );
             })}
