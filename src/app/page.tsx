@@ -5,7 +5,7 @@ import { Cpu, Network, Workflow, ArrowUpRight, Diamond, CheckCircle, Send, Phone
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { AREA } from './casademaquinas/area';
-import { WeExpandLogo, InteractiveBackground } from './brand';
+import { WeExpandLogo, InteractiveBackground, InstagramIcon, TikTokIcon, LinkedInIcon } from './brand';
 import { ProjectsSection } from './projects';
 
 // ROTATING HERO HEADLINES — one is randomly picked per visit, each tied to what We Expand does.
@@ -282,9 +282,9 @@ export default function Home() {
             <div className="flex gap-16 text-sm font-space uppercase tracking-[0.1em] text-white/30 pt-6 border-t border-white/5">
               <div className="flex flex-col gap-2">
                 <span className="text-white font-bold">Social</span>
-                <a href="https://linkedin.com/company/we-expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">LinkedIn</a>
-                <a href="https://instagram.com/we_expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">Instagram</a>
-                <a href="https://tiktok.com/@we.expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">TikTok</a>
+                <a href="https://linkedin.com/company/we-expand" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00F0FF] transition-colors"><LinkedInIcon />LinkedIn</a>
+                <a href="https://instagram.com/we_expand" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00F0FF] transition-colors"><InstagramIcon />Instagram</a>
+                <a href="https://tiktok.com/@we.expand" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00F0FF] transition-colors"><TikTokIcon />TikTok</a>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-white font-bold">Presence</span>

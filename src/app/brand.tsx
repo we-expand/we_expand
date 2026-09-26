@@ -370,3 +370,30 @@ export const InteractiveBackground = ({ bg = '#050505' }: { bg?: string }) => {
     </div>
   );
 };
+
+// Ícones de marca monoline (lucide não inclui logos de rede social)
+type IconProps = { className?: string };
+
+export const InstagramIcon = ({ className = 'w-4 h-4' }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+    <rect x="3" y="3" width="18" height="18" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export const TikTokIcon = ({ className = 'w-4 h-4' }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+    <path d="M14.5 3v10.5a3.5 3.5 0 1 1-3.5-3.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M14.5 3c0 2.6 2 4.6 4.5 4.7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+export const LinkedInIcon = ({ className = 'w-4 h-4' }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <line x1="7.5" y1="10.5" x2="7.5" y2="16.5" strokeLinecap="round" />
+    <circle cx="7.5" cy="7" r="0.6" fill="currentColor" stroke="none" />
+    <path d="M11 16.5v-6M11 12c0-1 1-1.5 2-1.5s2 .8 2 2.2v3.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
