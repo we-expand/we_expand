@@ -209,8 +209,13 @@ export default function AreaPage() {
       </section>
 
       <footer className="relative z-10 px-6 md:px-8 py-10 border-t border-white/5">
-        <div className="max-w-[1200px] mx-auto flex justify-between gap-4 font-space text-[10px] sm:text-xs tracking-widest uppercase text-white/25">
+        <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 font-space text-[10px] sm:text-xs tracking-widest uppercase text-white/25">
           <span>{AREA.name} · We Expand</span>
+          <div className="flex gap-6">
+            <a href="https://instagram.com/casa_de_maquinas_" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">Instagram</a>
+            <a href="https://tiktok.com/@casa.de.maquinas4" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">TikTok</a>
+            <a href="https://linkedin.com/company/we-expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">LinkedIn</a>
+          </div>
           <span>© {new Date().getFullYear()}</span>
         </div>
       </footer>

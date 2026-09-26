@@ -283,6 +283,8 @@ export default function Home() {
               <div className="flex flex-col gap-2">
                 <span className="text-white font-bold">Social</span>
                 <a href="https://linkedin.com/company/we-expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">LinkedIn</a>
+                <a href="https://instagram.com/we_expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">Instagram</a>
+                <a href="https://tiktok.com/@we.expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">TikTok</a>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-white font-bold">Presence</span>
