@@ -5,7 +5,7 @@ import { ArrowUpRight, Globe, Palette, MapPin, Layers, Smartphone } from 'lucide
 import Link from 'next/link';
 import { AREA } from './area';
 import DiagnosticForm from './DiagnosticForm';
-import { AreaLockup, InteractiveBackground } from '../brand';
+import { AreaLockup, InteractiveBackground, InstagramIcon, TikTokIcon, LinkedInIcon } from '../brand';
 import { ProjectsSection } from '../projects';
 
 const GLOW = '#00F0FF';
@@ -212,9 +212,9 @@ export default function AreaPage() {
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 font-space text-[10px] sm:text-xs tracking-widest uppercase text-white/25">
           <span>{AREA.name} · We Expand</span>
           <div className="flex gap-6">
-            <a href="https://instagram.com/casa_de_maquinas_" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">Instagram</a>
-            <a href="https://tiktok.com/@casa.de.maquinas4" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">TikTok</a>
-            <a href="https://linkedin.com/company/we-expand" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors">LinkedIn</a>
+            <a href="https://instagram.com/casa_de_maquinas_" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00F0FF] transition-colors"><InstagramIcon />Instagram</a>
+            <a href="https://tiktok.com/@casa.de.maquinas4" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00F0FF] transition-colors"><TikTokIcon />TikTok</a>
+            <a href="https://linkedin.com/company/we-expand" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00F0FF] transition-colors"><LinkedInIcon />LinkedIn</a>
           </div>
           <span>© {new Date().getFullYear()}</span>
         </div>
